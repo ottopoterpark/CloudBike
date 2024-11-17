@@ -1,0 +1,21 @@
+server:
+  port: 8080            # 服务端口
+
+spring:
+  profiles:
+    active: dev        # 激活配置环境
+  main:
+    allow-circular-references: true     # 循环依赖
+  datasource: # MySQL数据源配置
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${CloudBike.datasource.host}:${CloudBike.datasource.port}/${CloudBike.datasource.database}
+    username: ${CloudBike.datasource.username}
+    password: ${CloudBike.datasource.password}
+
+mybatis-plus:
+  configuration:
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler    # 枚举类型处理器
+    map-underscore-to-camel-case: true                                                          # 驼峰映射
+  global-config:
+    db-config:
+      id-type: auto                 # 主键自增
