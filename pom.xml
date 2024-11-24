@@ -28,7 +28,6 @@
         <mybatis-plus>3.5.8</mybatis-plus>
         <lombok>1.18.34</lombok>
         <jjwt>0.9.1</jjwt>
-        <swagger>4.1.0</swagger>
         <mysql>8.0.31</mysql>
     </properties>
 
@@ -53,12 +52,6 @@
                 <artifactId>jjwt</artifactId>
                 <version>${jjwt}</version>
             </dependency>
-<!--           Swagger-->
-            <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
-                <version>${swagger}</version>
-            </dependency>
 <!--            MySQL-->
             <dependency>
                 <groupId>mysql</groupId>
@@ -67,5 +60,13 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+    </dependencies>
 
 </project>

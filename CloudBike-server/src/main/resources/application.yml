@@ -19,3 +19,12 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto                 # 主键自增
+
+cloudbike:
+  jwt:
+    admin-secret-key: CloudBike
+    admin-ttl: 7200000
+    admin-token-name: adminToken
+    user-secret-key: CloudBike
+    user-ttl: 7200000
+    user-token-name: userToken
