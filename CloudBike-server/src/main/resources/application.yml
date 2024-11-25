@@ -28,3 +28,8 @@ cloudbike:
     user-secret-key: CloudBike
     user-ttl: 7200000
     user-token-name: userToken
+  alioss:
+    endpoint: ${CloudBike.alioss.endpoint}
+    access-key-id: ${CloudBike.alioss.access-key-id}
+    access-key-secret: ${CloudBike.alioss.access-key-secret}
+    bucket-name: ${CloudBike.alioss.bucket-name}
