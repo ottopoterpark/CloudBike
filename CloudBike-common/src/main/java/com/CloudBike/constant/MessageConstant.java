@@ -17,6 +17,6 @@ public class MessageConstant {
      */
     public static final String AUTHORITY_TOO_LOW = "权限不足，请联系管理员";
     public static final String DUPLICATE_USERNAME = "用户名重复";
-    public static final String ADMIN_MUST_EXIST = "管理员必须存在，无法删除";
+    public static final String ADMIN_MUST_EXIST = "管理员必须存在";
 
 }

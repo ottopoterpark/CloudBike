@@ -75,7 +75,6 @@ public class EmployeeController {
      * @return
      */
     @PostMapping
-    @Transactional
     public Result insert(@RequestBody Employee employee)
     {
         log.info("新增员工：{}",employee);
@@ -129,12 +128,26 @@ public class EmployeeController {
      * @return
      */
     @DeleteMapping
-    @Transactional
     public Result delete(@RequestParam List<Integer> ids)
     {
         log.info("批量删除：{}",ids);
         employeeService.delete(ids);
         return Result.success();
     }
+
+    /**
+     * 修改员工账号状态信息
+     * @param status
+     * @param id
+     * @return
+     */
+    @PutMapping("/status/{status}")
+    public Result chageStatus(@PathVariable Integer status,Integer id)
+    {
+        log.info("修改员工账号状态信息：{} {}",status,id);
+        employeeService.chageStatus(status,id);
+        return Result.success();
+    }
+
 
 }

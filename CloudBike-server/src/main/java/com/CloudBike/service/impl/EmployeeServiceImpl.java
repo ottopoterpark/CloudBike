@@ -252,4 +252,33 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         // 4、执行删除操作
         removeBatchByIds(ids);
     }
+
+    /**
+     * 修改员工帐号状态信息
+     * @param status
+     * @param id
+     */
+    @Override
+    @Transactional
+    public void chageStatus(Integer status, Integer id)
+    {
+        // 1、获取当前员工的权限信息
+        Integer empId = BaseContext.getCurrentId();
+        Employee employee = getById(empId);
+        Integer authority = employee.getAuthority();
+
+        // 2、普通员工无法执行该操作
+        if (authority==AuthorityConstant.COMMON)
+            throw new BaseException(MessageConstant.AUTHORITY_TOO_LOW);
+
+        // 3、管理员无法修改自己的账号信息（保持可用）
+        if (id==1)
+            throw new BaseException(MessageConstant.ADMIN_MUST_EXIST);
+
+        // 4、执行操作
+        lambdaUpdate()
+                .eq(id!=null,Employee::getId,id)
+                .set(status!=null,Employee::getStatus,status)
+                .update();
+    }
 }

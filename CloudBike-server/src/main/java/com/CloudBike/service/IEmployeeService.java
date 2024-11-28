@@ -56,4 +56,11 @@ public interface IEmployeeService extends IService<Employee> {
      * @param ids
      */
     void delete(List<Integer> ids);
+
+    /**
+     * 修改员工账号状态信息
+     * @param status
+     * @param id
+     */
+    void chageStatus(Integer status, Integer id);
 }
