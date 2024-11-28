@@ -63,4 +63,10 @@ public interface IEmployeeService extends IService<Employee> {
      * @param id
      */
     void chageStatus(Integer status, Integer id);
+
+    /**
+     * 重置密码
+     * @param id
+     */
+    void resetPassword(Integer id);
 }

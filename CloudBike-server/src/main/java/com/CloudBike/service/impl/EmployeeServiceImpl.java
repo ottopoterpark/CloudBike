@@ -14,14 +14,11 @@ import com.CloudBike.result.PageResult;
 import com.CloudBike.service.IEmployeeService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.boot.autoconfigure.orm.jpa.EntityManagerFactoryDependsOnPostProcessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -198,7 +195,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
                 .toList();
 
         // 4、如果是管理员操作或自己信息修改，则允许
-        if (empId == operatorId || operator.getAuthority()==AuthorityConstant.ADMINISTRATOR)
+        if (empId == operatorId || operator.getAuthority() == AuthorityConstant.ADMINISTRATOR)
         {
             // 4.1、如果用户名无重复，则更新
             if (ids == null || ids.isEmpty())
@@ -212,7 +209,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
             }
 
             // 4.2、如果用户名与待修改员工原用户名相同，也允许修改
-            if (ids.size()==1&&ids.get(0)==empId)
+            if (ids.size() == 1 && ids.get(0) == empId)
             {
                 lambdaUpdate()
                         .eq(Employee::getId, empId)
@@ -231,6 +228,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
     /**
      * （批量）删除员工
+     *
      * @param ids
      */
     @Override
@@ -242,12 +240,12 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         Employee employee = getById(empId);
 
         // 2、如果为普通员工，无法删除
-        if (employee.getAuthority()==AuthorityConstant.COMMON)
+        if (employee.getAuthority() == AuthorityConstant.COMMON)
             throw new BaseException(MessageConstant.AUTHORITY_TOO_LOW);
 
         // 3、ids不能含有管理员id（唯一）
         if (ids.contains(1))
-            throw new BaseException(MessageConstant.ADMIN_MUST_EXIST);
+            throw new BaseException(MessageConstant.AUTHORITY_TOO_HIGN);
 
         // 4、执行删除操作
         removeBatchByIds(ids);
@@ -255,6 +253,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
     /**
      * 修改员工帐号状态信息
+     *
      * @param status
      * @param id
      */
@@ -268,17 +267,48 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         Integer authority = employee.getAuthority();
 
         // 2、普通员工无法执行该操作
-        if (authority==AuthorityConstant.COMMON)
+        if (authority == AuthorityConstant.COMMON)
             throw new BaseException(MessageConstant.AUTHORITY_TOO_LOW);
 
         // 3、管理员无法修改自己的账号信息（保持可用）
-        if (id==1)
-            throw new BaseException(MessageConstant.ADMIN_MUST_EXIST);
+        if (id == 1)
+            throw new BaseException(MessageConstant.AUTHORITY_TOO_HIGN);
 
         // 4、执行操作
         lambdaUpdate()
+                .eq(id != null, Employee::getId, id)
+                .set(status != null, Employee::getStatus, status)
+                .update();
+    }
+
+    /**
+     * 重置密码
+     *
+     * @param id
+     */
+    @Override
+    @Transactional
+    public void resetPassword(Integer id)
+    {
+        // 1、获取当前员工的权限
+        Integer empId = BaseContext.getCurrentId();
+        Employee employee = getById(empId);
+        Integer authority = employee.getAuthority();
+
+        // 2、如果为普通员工，拒绝操作
+        if (authority == AuthorityConstant.COMMON)
+            throw new BaseException(MessageConstant.AUTHORITY_TOO_LOW);
+
+        // 3、判断操作对象是否为管理员（非法操作）
+        if (id == 1)
+            throw new BaseException(MessageConstant.AUTHORITY_TOO_HIGN);
+
+        // 4、执行操作
+        String password=DefaultConstant.DEFAULT_PASSWORD;
+        password=DigestUtils.md5DigestAsHex(password.getBytes());
+        lambdaUpdate()
                 .eq(id!=null,Employee::getId,id)
-                .set(status!=null,Employee::getStatus,status)
+                .set(password!=null&&!password.isEmpty(),Employee::getPassword,password)
                 .update();
     }
 }

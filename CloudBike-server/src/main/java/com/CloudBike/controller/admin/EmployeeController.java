@@ -149,5 +149,16 @@ public class EmployeeController {
         return Result.success();
     }
 
-
+    /**
+     * 重置密码
+     * @param id
+     * @return
+     */
+    @PutMapping("/password")
+    public Result resetPassword(Integer id)
+    {
+        log.info("重置密码：{}",id);
+        employeeService.resetPassword(id);
+        return Result.success();
+    }
 }
