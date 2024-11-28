@@ -6,6 +6,8 @@ import com.CloudBike.entity.Employee;
 import com.CloudBike.result.PageResult;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 运营团队表 服务类
@@ -48,4 +50,10 @@ public interface IEmployeeService extends IService<Employee> {
      * @param employee
      */
     void modify(Employee employee);
+
+    /**
+     * （批量删除员工）
+     * @param ids
+     */
+    void delete(List<Integer> ids);
 }

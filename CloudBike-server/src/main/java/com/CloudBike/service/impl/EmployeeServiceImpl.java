@@ -228,4 +228,28 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         // 5、否则不允许修改
         throw new BaseException(MessageConstant.AUTHORITY_TOO_LOW);
     }
+
+    /**
+     * （批量）删除员工
+     * @param ids
+     */
+    @Override
+    @Transactional
+    public void delete(List<Integer> ids)
+    {
+        // 1、获取当前员工的权限
+        Integer empId = BaseContext.getCurrentId();
+        Employee employee = getById(empId);
+
+        // 2、如果为普通员工，无法删除
+        if (employee.getAuthority()==AuthorityConstant.COMMON)
+            throw new BaseException(MessageConstant.AUTHORITY_TOO_LOW);
+
+        // 3、ids不能含有管理员id（唯一）
+        if (ids.contains(1))
+            throw new BaseException(MessageConstant.ADMIN_MUST_EXIST);
+
+        // 4、执行删除操作
+        removeBatchByIds(ids);
+    }
 }

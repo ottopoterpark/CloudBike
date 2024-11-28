@@ -133,7 +133,7 @@ public class EmployeeController {
     public Result delete(@RequestParam List<Integer> ids)
     {
         log.info("批量删除：{}",ids);
-        employeeService.removeBatchByIds(ids);
+        employeeService.delete(ids);
         return Result.success();
     }
 
