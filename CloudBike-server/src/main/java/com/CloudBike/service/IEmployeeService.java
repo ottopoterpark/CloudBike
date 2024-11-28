@@ -2,6 +2,7 @@ package com.CloudBike.service;
 
 import com.CloudBike.dto.EmployeeInfoPageQuery;
 import com.CloudBike.dto.LoginDTO;
+import com.CloudBike.dto.PasswordDTO;
 import com.CloudBike.entity.Employee;
 import com.CloudBike.result.PageResult;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -62,11 +63,17 @@ public interface IEmployeeService extends IService<Employee> {
      * @param status
      * @param id
      */
-    void chageStatus(Integer status, Integer id);
+    void changeStatus(Integer status, Integer id);
 
     /**
      * 重置密码
      * @param id
      */
     void resetPassword(Integer id);
+
+    /**
+     * 修改密码
+     * @param passwordDTO
+     */
+    void changePassword(PasswordDTO passwordDTO);
 }

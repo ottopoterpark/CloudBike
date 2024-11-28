@@ -16,7 +16,11 @@ public class MessageConstant {
      * 操作非法提示信息
      */
     public static final String AUTHORITY_TOO_LOW = "权限不足，请联系管理员";
-    public static final String DUPLICATE_USERNAME = "用户名重复";
     public static final String AUTHORITY_TOO_HIGN = "无法对管理员进行操作";
 
+    /**
+     * 操作有误提示信息
+     */
+    public static final String DUPLICATE_USERNAME = "用户名重复";
+    public static final String OLDPASSWORD_ERROR="原始密码有误";
 }

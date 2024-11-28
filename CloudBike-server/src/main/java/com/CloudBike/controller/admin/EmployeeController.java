@@ -3,7 +3,7 @@ package com.CloudBike.controller.admin;
 
 import com.CloudBike.dto.EmployeeInfoPageQuery;
 import com.CloudBike.dto.LoginDTO;
-import com.CloudBike.dto.PageQuery;
+import com.CloudBike.dto.PasswordDTO;
 import com.CloudBike.entity.Employee;
 import com.CloudBike.properties.JwtProperties;
 import com.CloudBike.result.PageResult;
@@ -13,8 +13,6 @@ import com.CloudBike.utils.JwtUtil;
 import com.CloudBike.vo.LoginVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -142,10 +140,10 @@ public class EmployeeController {
      * @return
      */
     @PutMapping("/status/{status}")
-    public Result chageStatus(@PathVariable Integer status,Integer id)
+    public Result changeStatus(@PathVariable Integer status,Integer id)
     {
         log.info("修改员工账号状态信息：{} {}",status,id);
-        employeeService.chageStatus(status,id);
+        employeeService.changeStatus(status,id);
         return Result.success();
     }
 
@@ -154,11 +152,24 @@ public class EmployeeController {
      * @param id
      * @return
      */
-    @PutMapping("/password")
+    @PutMapping("/reset")
     public Result resetPassword(Integer id)
     {
         log.info("重置密码：{}",id);
         employeeService.resetPassword(id);
+        return Result.success();
+    }
+
+    /**
+     * 修改密码
+     * @param passwordDTO
+     * @return
+     */
+    @PutMapping("/password")
+    public Result changePassword(@RequestBody PasswordDTO passwordDTO)
+    {
+        log.info("修改密码：{}",passwordDTO);
+        employeeService.changePassword(passwordDTO);
         return Result.success();
     }
 }

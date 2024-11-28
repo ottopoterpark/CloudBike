@@ -7,6 +7,7 @@ import com.CloudBike.constant.StatusConstant;
 import com.CloudBike.context.BaseContext;
 import com.CloudBike.dto.EmployeeInfoPageQuery;
 import com.CloudBike.dto.LoginDTO;
+import com.CloudBike.dto.PasswordDTO;
 import com.CloudBike.entity.Employee;
 import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.EmployeeMapper;
@@ -259,7 +260,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
      */
     @Override
     @Transactional
-    public void chageStatus(Integer status, Integer id)
+    public void changeStatus(Integer status, Integer id)
     {
         // 1、获取当前员工的权限信息
         Integer empId = BaseContext.getCurrentId();
@@ -309,6 +310,37 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         lambdaUpdate()
                 .eq(id!=null,Employee::getId,id)
                 .set(password!=null&&!password.isEmpty(),Employee::getPassword,password)
+                .update();
+    }
+
+    /**
+     * 修改密码
+     * @param passwordDTO
+     */
+    @Override
+    public void changePassword(PasswordDTO passwordDTO)
+    {
+        // 1、获取原始密码和新密码
+        String oldPassword = passwordDTO.getOldPassword();
+        String newPassword = passwordDTO.getNewPassword();
+
+        // 2、获取当前后台员工id
+        Integer empId = BaseContext.getCurrentId();
+
+        // 3、获取当前后台员工密码（MD5加密版）
+        Employee employee = getById(empId);
+        String password = employee.getPassword();
+
+        // 4、对旧密码加密然后对比，如果不一致提示信息
+        oldPassword=DigestUtils.md5DigestAsHex(oldPassword.getBytes());
+        if (!oldPassword.equals(password))
+            throw new BaseException(MessageConstant.OLDPASSWORD_ERROR);
+
+        // 5、对新密码进行MD5加密然后存储
+        newPassword=DigestUtils.md5DigestAsHex(newPassword.getBytes());
+        lambdaUpdate()
+                .eq(empId!=null,Employee::getId,empId)
+                .set(newPassword!=null&&!newPassword.isEmpty(),Employee::getPassword,newPassword)
                 .update();
     }
 }
