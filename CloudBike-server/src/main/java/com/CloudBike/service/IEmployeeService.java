@@ -30,4 +30,9 @@ public interface IEmployeeService extends IService<Employee> {
      */
     PageResult page(PageQuery pageQuery);
 
+    /**
+     * 新增员工
+     * @param employee
+     */
+    void insert(Employee employee);
 }

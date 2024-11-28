@@ -4,8 +4,17 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 分页查询DTO
+ */
 @Data
 public class PageQuery implements Serializable {
-    private Integer page;           // 页码
-    private Integer pageSize;       // 分页大小
+    /**
+     * 页码
+     */
+    private Integer page;
+    /**
+     * 分页大小
+     */
+    private Integer pageSize;
 }

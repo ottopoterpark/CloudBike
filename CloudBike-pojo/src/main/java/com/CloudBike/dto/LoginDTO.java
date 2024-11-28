@@ -9,6 +9,12 @@ import java.io.Serializable;
  */
 @Data
 public class LoginDTO implements Serializable {
-    private String username;        // 用户名
-    private String password;        // 密码
+    /**
+     * 用户名
+     */
+    private String username;
+    /**
+     * 密码
+     */
+    private String password;
 }

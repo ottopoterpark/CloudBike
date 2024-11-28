@@ -10,6 +10,7 @@ import com.CloudBike.result.Result;
 import com.CloudBike.service.IEmployeeService;
 import com.CloudBike.utils.JwtUtil;
 import com.CloudBike.vo.LoginVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,13 +31,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/employee")
 @Slf4j
+@RequiredArgsConstructor
 public class EmployeeController {
 
-    @Autowired
-    private IEmployeeService employeeService;
-
-    @Autowired
-    private JwtProperties jwtProperties;
+    private final IEmployeeService employeeService;
+    private final JwtProperties jwtProperties;
 
     /**
      * 员工登录
@@ -76,10 +75,10 @@ public class EmployeeController {
      */
     @PostMapping
     @Transactional
-    public Result save(@RequestBody Employee employee)
+    public Result insert(@RequestBody Employee employee)
     {
         log.info("新增员工：{}",employee);
-        employeeService.save(employee);
+        employeeService.insert(employee);
         return Result.success();
     }
 
