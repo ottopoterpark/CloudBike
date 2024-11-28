@@ -112,15 +112,14 @@ public class EmployeeController {
 
     /**
      * 修改员工信息
-     * @param id
+     * @param employee
      * @return
      */
-    @PutMapping("/{id}")
-    @Transactional
-    public Result update(@PathVariable Integer id,@RequestBody Employee employee)
+    @PutMapping()
+    public Result modify(@RequestBody Employee employee)
     {
-        log.info("员工信息修改：{}  {}",id,employee);
-        employeeService.update(employee);
+        log.info("员工信息修改：{}",employee);
+        employeeService.modify(employee);
         return Result.success();
     }
 

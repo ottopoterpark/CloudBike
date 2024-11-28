@@ -2,7 +2,6 @@ package com.CloudBike.service;
 
 import com.CloudBike.dto.EmployeeInfoPageQuery;
 import com.CloudBike.dto.LoginDTO;
-import com.CloudBike.dto.PageQuery;
 import com.CloudBike.entity.Employee;
 import com.CloudBike.result.PageResult;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -38,15 +37,15 @@ public interface IEmployeeService extends IService<Employee> {
     void insert(Employee employee);
 
     /**
-     * 修改员工信息
-     * @param employee
-     */
-    void update(Employee employee);
-
-    /**
      * 根据员工id查询信息
      * @param id
      * @return
      */
     Employee one(Integer id);
+
+    /**
+     * 修改员工信息
+     * @param employee
+     */
+    void modify(Employee employee);
 }
