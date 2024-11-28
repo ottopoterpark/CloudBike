@@ -26,7 +26,7 @@ public interface IEmployeeService extends IService<Employee> {
 
     /**
      * 员工分页查询
-     * @param pageQuery
+     * @param employeeInfoPageQuery
      * @return
      */
     PageResult page(EmployeeInfoPageQuery employeeInfoPageQuery);
@@ -36,4 +36,17 @@ public interface IEmployeeService extends IService<Employee> {
      * @param employee
      */
     void insert(Employee employee);
+
+    /**
+     * 修改员工信息
+     * @param employee
+     */
+    void update(Employee employee);
+
+    /**
+     * 根据员工id查询信息
+     * @param id
+     * @return
+     */
+    Employee one(Integer id);
 }

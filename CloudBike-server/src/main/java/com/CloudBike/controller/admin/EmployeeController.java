@@ -102,13 +102,13 @@ public class EmployeeController {
      * @return
      */
     @GetMapping("/{id}")
-    @Transactional
     public Result<Employee> one(@PathVariable Integer id)
     {
         log.info("根据员工id查询信息：{}",id);
-        Employee employee=employeeService.getById(id);
+        Employee employee=employeeService.one(id);
         return Result.success(employee);
     }
+
 
     /**
      * 修改员工信息
@@ -120,15 +120,7 @@ public class EmployeeController {
     public Result update(@PathVariable Integer id,@RequestBody Employee employee)
     {
         log.info("员工信息修改：{}  {}",id,employee);
-        employee.setId(id);
-
-        // 修改员工信息
-        employeeService.lambdaUpdate()
-                .eq(employee.getId()!=null,Employee::getId,id)
-                .set(employee.getUsername()!=null&&!employee.getUsername().isEmpty(),Employee::getUsername,employee.getUsername())
-                .set(employee.getName()!=null&&!employee.getName().isEmpty(),Employee::getName,employee.getName())
-                .set(employee.getAuthority()!=null,Employee::getAuthority,employee.getAuthority())
-                .update();
+        employeeService.update(employee);
         return Result.success();
     }
 
