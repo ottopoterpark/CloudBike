@@ -1,5 +1,6 @@
 package com.CloudBike.service;
 
+import com.CloudBike.dto.EmployeeInfoPageQuery;
 import com.CloudBike.dto.LoginDTO;
 import com.CloudBike.dto.PageQuery;
 import com.CloudBike.entity.Employee;
@@ -28,7 +29,7 @@ public interface IEmployeeService extends IService<Employee> {
      * @param pageQuery
      * @return
      */
-    PageResult page(PageQuery pageQuery);
+    PageResult page(EmployeeInfoPageQuery employeeInfoPageQuery);
 
     /**
      * 新增员工

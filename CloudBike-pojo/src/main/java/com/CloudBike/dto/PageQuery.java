@@ -12,9 +12,9 @@ public class PageQuery implements Serializable {
     /**
      * 页码
      */
-    private Integer page;
+    private Integer page = 1;
     /**
      * 分页大小
      */
-    private Integer pageSize;
+    private Integer pageSize = 10;
 }

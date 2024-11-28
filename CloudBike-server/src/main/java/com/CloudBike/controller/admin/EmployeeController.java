@@ -1,6 +1,7 @@
 package com.CloudBike.controller.admin;
 
 
+import com.CloudBike.dto.EmployeeInfoPageQuery;
 import com.CloudBike.dto.LoginDTO;
 import com.CloudBike.dto.PageQuery;
 import com.CloudBike.entity.Employee;
@@ -84,14 +85,14 @@ public class EmployeeController {
 
     /**
      * 分页查询员工信息
-     * @param pageQuery
+     * @param employeeInfoPageQuery
      * @return
      */
     @GetMapping("/page")
-    public Result<PageResult> page(PageQuery pageQuery)
+    public Result<PageResult> page(EmployeeInfoPageQuery employeeInfoPageQuery)
     {
-        log.info("员工分页查询：{}",pageQuery);
-        PageResult pageResult=employeeService.page(pageQuery);
+        log.info("员工分页查询：{}",employeeInfoPageQuery);
+        PageResult pageResult=employeeService.page(employeeInfoPageQuery);
         return Result.success(pageResult);
     }
 
