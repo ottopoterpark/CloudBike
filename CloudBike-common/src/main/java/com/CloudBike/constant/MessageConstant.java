@@ -11,6 +11,7 @@ public class MessageConstant {
     public static final String ACCOUNT_NOT_FOUND = "账号不存在";
     public static final String PASSWORD_ERROR = "密码错误";
     public static final String ACCOUNT_LOCKED = "账号被冻结";
+    public static final String LOGIN_FAILED = "登录失败";
 
     /**
      * 操作非法提示信息
@@ -22,5 +23,5 @@ public class MessageConstant {
      * 操作有误提示信息
      */
     public static final String DUPLICATE_USERNAME = "用户名重复";
-    public static final String OLDPASSWORD_ERROR="原始密码有误";
+    public static final String OLDPASSWORD_ERROR = "原始密码有误";
 }

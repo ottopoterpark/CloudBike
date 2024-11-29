@@ -18,29 +18,39 @@
     </properties>
 
     <dependencies>
-<!--        公共组件模块-->
+        <!--        阿里巴巴json转换包-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+        <!--        HttpClient客户端编程工具包 -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <!--        公共组件模块-->
         <dependency>
             <groupId>com</groupId>
             <artifactId>CloudBike-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-<!--        数据组件模块-->
+        <!--        数据组件模块-->
         <dependency>
             <groupId>com</groupId>
             <artifactId>CloudBike-pojo</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-<!--        Web起步依赖-->
+        <!--        Web起步依赖-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-<!--        MySQL-->
+        <!--        MySQL-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-<!--        JWT-->
+        <!--        JWT-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>

@@ -12,47 +12,61 @@
     <groupId>com</groupId>
     <artifactId>CloudBike</artifactId>
 
-<!--    父工程-->
+    <!--    父工程-->
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
 
-<!--    聚合工程-->
+    <!--    聚合工程-->
     <modules>
         <module>CloudBike-pojo</module>
         <module>CloudBike-common</module>
         <module>CloudBike-server</module>
     </modules>
 
-<!--    版本控制-->
+    <!--    版本控制-->
     <properties>
         <mybatis-plus>3.5.8</mybatis-plus>
         <lombok>1.18.34</lombok>
         <jjwt>0.9.1</jjwt>
         <mysql>8.0.31</mysql>
+        <httpclient>4.5.14</httpclient>
+        <fastjson>1.2.76</fastjson>
     </properties>
 
     <!--    依赖管理-->
     <dependencyManagement>
         <dependencies>
-<!--            Mybatis-Plus-->
+            <!--            阿里巴巴json转换包-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson}</version>
+            </dependency>
+            <!--            HttpClient客户端编程包-->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient}</version>
+            </dependency>
+            <!--            Mybatis-Plus-->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybatis-plus}</version>
             </dependency>
-<!--            Lombok-->
+            <!--            Lombok-->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok}</version>
             </dependency>
-<!--            JWT-->
+            <!--            JWT-->
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt</artifactId>
                 <version>${jjwt}</version>
             </dependency>
-<!--            MySQL-->
+            <!--            MySQL-->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>

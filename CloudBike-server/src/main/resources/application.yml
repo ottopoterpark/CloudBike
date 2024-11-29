@@ -33,3 +33,6 @@ cloudbike:
     access-key-id: ${CloudBike.alioss.access-key-id}
     access-key-secret: ${CloudBike.alioss.access-key-secret}
     bucket-name: ${CloudBike.alioss.bucket-name}
+  wechat:
+    appid: ${CloudBike.wechat.appid}
+    secret: ${CloudBike.wechat.secret}

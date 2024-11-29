@@ -4,6 +4,9 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * JWT令牌属性配置类
+ */
 @Component
 @ConfigurationProperties(prefix = "cloudbike.jwt")
 @Data

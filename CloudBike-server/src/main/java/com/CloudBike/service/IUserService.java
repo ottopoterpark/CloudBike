@@ -13,4 +13,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2024-11-20
  */
 public interface IUserService extends IService<User> {
+    /**
+     * 微信用户登录
+     * @param userLoginDTO
+     * @return
+     */
+    User login(UserLoginDTO userLoginDTO);
 }

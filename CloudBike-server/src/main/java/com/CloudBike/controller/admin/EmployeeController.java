@@ -1,6 +1,7 @@
 package com.CloudBike.controller.admin;
 
 
+import com.CloudBike.constant.JwtClaimsConstant;
 import com.CloudBike.dto.EmployeeInfoPageQuery;
 import com.CloudBike.dto.LoginDTO;
 import com.CloudBike.dto.PasswordDTO;
@@ -50,7 +51,7 @@ public class EmployeeController {
 
         // 登录成功后，生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
-        claims.put("empId", employee.getId());
+        claims.put(JwtClaimsConstant.EMP_ID, employee.getId());
         String token = JwtUtil.createJWT(
                 jwtProperties.getAdminSecretKey(),
                 jwtProperties.getAdminTtl(),
