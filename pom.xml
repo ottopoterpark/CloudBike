@@ -31,11 +31,18 @@
         <mysql>8.0.31</mysql>
         <httpclient>4.5.14</httpclient>
         <fastjson>1.2.76</fastjson>
+        <oss>3.10.2</oss>
     </properties>
 
     <!--    依赖管理-->
     <dependencyManagement>
         <dependencies>
+            <!--            阿里云云存储-->
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${oss}</version>
+            </dependency>
             <!--            阿里巴巴json转换包-->
             <dependency>
                 <groupId>com.alibaba</groupId>
