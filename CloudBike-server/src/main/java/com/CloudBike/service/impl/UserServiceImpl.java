@@ -34,7 +34,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     /**
      * 微信官方获得微信用户openid的url
      */
-    private final String loginUrl="https://api.weixin.qq.com/sns/jscode2session";
+    private final String loginUrl = "https://api.weixin.qq.com/sns/jscode2session";
     private final WeChatProperties weChatProperties;
 
     /**
@@ -52,9 +52,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         paramMap.put("secret", weChatProperties.getSecret());
         paramMap.put("js_code", userLoginDTO.getCode());
         paramMap.put("grant_type", "authorization_code");
-        String json = HttpClientUtil.doGet(loginUrl, paramMap);         // 获得响应结果
-        JSONObject jsonObject = JSON.parseObject(json);                 // 解析响应结果
-        String openid = jsonObject.getString("openid");
+//        todo 后端开发跳过微信登陆
+//        String json = HttpClientUtil.doGet(loginUrl, paramMap);         // 获得响应结果
+//        JSONObject jsonObject = JSON.parseObject(json);                 // 解析响应结果
+//        String openid = jsonObject.getString("openid");
+        String openid = "1";
 
         // 判断openid是否为空，如果为空表示登陆失败，抛出业务异常
         if (openid == null)
@@ -63,6 +65,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 判断当前微信用户是不是新用户
         User user = lambdaQuery()
                 .eq(User::getOpenid, openid).one();
+
 
         // 如果是新用户，自动完成注册
         if (user == null)
