@@ -1,6 +1,6 @@
 package com.CloudBike.service;
 
-import com.CloudBike.entity.Group;
+import com.CloudBike.entity.Ride;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +11,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author unique
  * @since 2024-11-20
  */
-public interface IGroupService extends IService<Group> {
-
+public interface IRideService extends IService<Ride> {
+    /**
+     * 申请骑行团
+     * @param ride
+     */
+    void insert(Ride ride);
 }

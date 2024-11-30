@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @author unique
  * @since 2024-11-20
  */
-@RestController("adminGroupController")
-@RequestMapping("/admin/group")
-public class GroupController {
+@RestController("adminRideController")
+@RequestMapping("/admin/ride")
+public class RideController {
 
 }

@@ -32,6 +32,7 @@
         <httpclient>4.5.14</httpclient>
         <fastjson>1.2.76</fastjson>
         <oss>3.10.2</oss>
+        <jackson>2.17.2</jackson>
     </properties>
 
     <!--    依赖管理-->
@@ -78,6 +79,12 @@
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql}</version>
+            </dependency>
+            <!--            JSON数据序列化与反序列化包-->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

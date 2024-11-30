@@ -19,12 +19,17 @@
 
 
     <dependencies>
-<!--        Mybatis-Plus-->
+        <!--        JSON数据序列化与反序列化包-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <!--        Mybatis-Plus-->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
         </dependency>
-<!--        Lombok-->
+        <!--        Lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

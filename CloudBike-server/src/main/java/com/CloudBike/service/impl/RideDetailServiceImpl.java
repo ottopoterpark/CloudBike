@@ -1,8 +1,8 @@
 package com.CloudBike.service.impl;
 
-import com.CloudBike.entity.GroupDetail;
-import com.CloudBike.mapper.GroupDetailMapper;
-import com.CloudBike.service.IGroupDetailService;
+import com.CloudBike.entity.RideDetail;
+import com.CloudBike.mapper.RideDetailMapper;
+import com.CloudBike.service.IRideDetailService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2024-11-20
  */
 @Service
-public class GroupDetailServiceImpl extends ServiceImpl<GroupDetailMapper, GroupDetail> implements IGroupDetailService {
+public class RideDetailServiceImpl extends ServiceImpl<RideDetailMapper, RideDetail> implements IRideDetailService {
 
 }

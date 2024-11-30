@@ -1,6 +1,6 @@
 package com.CloudBike.service;
 
-import com.CloudBike.entity.GroupDetail;
+import com.CloudBike.entity.RideDetail;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author unique
  * @since 2024-11-20
  */
-public interface IGroupDetailService extends IService<GroupDetail> {
+public interface IRideDetailService extends IService<RideDetail> {
 
 }
