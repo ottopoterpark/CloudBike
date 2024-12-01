@@ -1,6 +1,7 @@
 package com.CloudBike.service;
 
 import com.CloudBike.entity.Ride;
+import com.CloudBike.vo.RideDetailVO;
 import com.CloudBike.vo.RideOverviewVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -27,4 +28,17 @@ public interface IRideService extends IService<Ride> {
      * @return
      */
     List<RideOverviewVO> list(String name);
+
+    /**
+     * 根据id查询骑行团详情
+     * @param id
+     * @return
+     */
+    RideDetailVO one(Integer id);
+
+    /**
+     * 加入骑行团
+     * @param id
+     */
+    void join(Integer id);
 }

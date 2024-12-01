@@ -26,6 +26,7 @@ public class MessageConstant {
     public static final String DUPLICATE_USERNAME = "用户名重复";
     public static final String OLDPASSWORD_ERROR = "原始密码有误";
     public static final String UPLOAD_FAILED = "文件上传失败";
+    public static final String BUSY_DAY = "当天已有其他活动";
 
     /**
      * 空结果提示信息

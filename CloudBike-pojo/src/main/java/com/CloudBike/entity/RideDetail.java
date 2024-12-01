@@ -33,7 +33,7 @@ public class RideDetail implements Serializable {
     /**
      * 骑行团
      */
-    private Integer groupId;
+    private Integer rideId;
 
     /**
      * 参与者
