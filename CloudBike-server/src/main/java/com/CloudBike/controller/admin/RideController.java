@@ -8,10 +8,7 @@ import com.CloudBike.service.IRideService;
 import com.CloudBike.vo.RideCheckDetailVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -53,5 +50,19 @@ public class RideController {
         log.info("查看骑行团信息详情：{}",id);
         RideCheckDetailVO rideCheckDetailVO=rideService.getone(id);
         return Result.success(rideCheckDetailVO);
+    }
+
+    /**
+     * 审核骑行团信息
+     * @param status
+     * @param id
+     * @return
+     */
+    @PutMapping("/status/{status}")
+    public Result check(Integer id,@PathVariable Integer status)
+    {
+        log.info("审核骑行团信息：{}  {}",id,status);
+        rideService.check(id,status);
+        return Result.success();
     }
 }

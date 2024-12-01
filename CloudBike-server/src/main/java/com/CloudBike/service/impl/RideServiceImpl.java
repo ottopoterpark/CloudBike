@@ -363,4 +363,19 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         // 4、返回结果
         return rideCheckDetailVO;
     }
+
+    /**
+     * 审核骑行团信息
+     * @param id
+     * @param status
+     */
+    @Override
+    @Transactional
+    public void check(Integer id, Integer status)
+    {
+        lambdaUpdate()
+                .eq(Ride::getId,id)
+                .set(Ride::getStatus,status)
+                .update();
+    }
 }

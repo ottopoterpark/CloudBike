@@ -58,4 +58,11 @@ public interface IRideService extends IService<Ride> {
      * @return
      */
     RideCheckDetailVO getone(Integer id);
+
+    /**
+     * 审核骑行团信息
+     * @param id
+     * @param status
+     */
+    void check(Integer id, Integer status);
 }
