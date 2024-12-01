@@ -96,5 +96,8 @@ public class Ride implements Serializable {
      */
     private Integer participants;
 
-
+    /**
+     * 限制人数
+     */
+    private Integer maxPeople;
 }

@@ -3,6 +3,7 @@ package com.CloudBike.service;
 import com.CloudBike.dto.RideInfoPageQuery;
 import com.CloudBike.entity.Ride;
 import com.CloudBike.result.PageResult;
+import com.CloudBike.vo.RideCheckDetailVO;
 import com.CloudBike.vo.RideDetailVO;
 import com.CloudBike.vo.RideOverviewVO;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -50,4 +51,11 @@ public interface IRideService extends IService<Ride> {
      * @return
      */
     PageResult page(RideInfoPageQuery rideInfoPageQuery);
+
+    /**
+     * 根据id查看骑行团信息详情
+     * @param id
+     * @return
+     */
+    RideCheckDetailVO getone(Integer id);
 }

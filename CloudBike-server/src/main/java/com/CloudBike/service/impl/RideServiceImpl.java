@@ -11,6 +11,7 @@ import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.RideMapper;
 import com.CloudBike.result.PageResult;
 import com.CloudBike.service.IRideService;
+import com.CloudBike.vo.RideCheckDetailVO;
 import com.CloudBike.vo.RideCheckOverviewVO;
 import com.CloudBike.vo.RideDetailVO;
 import com.CloudBike.vo.RideOverviewVO;
@@ -117,6 +118,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         List<Ride> list = lambdaQuery()
                 .like(name != null && !name.isEmpty(), Ride::getName, name)
                 .eq(Ride::getStatus, StatusConstant.PASSED)
+                .apply("participants < max_people")
                 .gt(Ride::getDepartureTime, LocalDateTime.now())
                 .orderByDesc(Ride::getParticipants)
                 .orderByDesc(Ride::getUpdateTime)
@@ -332,5 +334,33 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 .total(p.getTotal())
                 .records(rideCheckOverviewVOS)
                 .build();
+    }
+
+    /**
+     * 根据id查看骑行团信息详情
+     * @param id
+     * @return
+     */
+    @Override
+    public RideCheckDetailVO getone(Integer id)
+    {
+        // 1、根据id查询骑行团信息
+        Ride ride = getById(id);
+
+        // 2、获取发起者信息
+        Integer userId = ride.getUserId();
+        User user = Db.lambdaQuery(User.class)
+                .eq(User::getId, userId)
+                .one();
+
+        // 3、封装结果
+        RideCheckDetailVO rideCheckDetailVO=new RideCheckDetailVO();
+        BeanUtils.copyProperties(ride,rideCheckDetailVO);
+        rideCheckDetailVO.setUsername(user.getUsername());
+        if (user.getPhone()!=null&&!user.getPhone().isEmpty())
+            rideCheckDetailVO.setPhone(user.getPhone());
+
+        // 4、返回结果
+        return rideCheckDetailVO;
     }
 }
