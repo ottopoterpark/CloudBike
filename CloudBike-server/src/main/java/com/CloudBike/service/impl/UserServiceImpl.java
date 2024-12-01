@@ -7,17 +7,14 @@ import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.UserMapper;
 import com.CloudBike.properties.WeChatProperties;
 import com.CloudBike.service.IUserService;
-import com.CloudBike.utils.HttpClientUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * <p>
@@ -66,12 +63,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User user = lambdaQuery()
                 .eq(User::getOpenid, openid).one();
 
-
         // 如果是新用户，自动完成注册
         if (user == null)
         {
             user = User.builder()
                     .openid(openid)
+                    .username("用户"+ UUID.randomUUID())
                     .build();
             save(user);
         }

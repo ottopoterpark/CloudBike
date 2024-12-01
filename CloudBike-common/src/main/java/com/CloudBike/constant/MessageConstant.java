@@ -27,5 +27,8 @@ public class MessageConstant {
     public static final String OLDPASSWORD_ERROR = "原始密码有误";
     public static final String UPLOAD_FAILED = "文件上传失败";
 
-
+    /**
+     * 空结果提示信息
+     */
+    public static final String EMPTY_RESULT = "无符合条件的结果";
 }

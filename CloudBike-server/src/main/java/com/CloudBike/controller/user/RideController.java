@@ -4,13 +4,13 @@ package com.CloudBike.controller.user;
 import com.CloudBike.entity.Ride;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.IRideService;
+import com.CloudBike.service.impl.RideServiceImpl;
+import com.CloudBike.vo.RideOverviewVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 /**
  * <p>
@@ -25,7 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class RideController {
-    private final IRideService groupService;
+    private final IRideService rideService;
+    private final RideServiceImpl rideServiceImpl;
 
     /**
      * 申请骑行团
@@ -36,7 +37,20 @@ public class RideController {
     public Result insert(@RequestBody Ride ride)
     {
         log.info("申请骑行团：{}",ride);
-        groupService.insert(ride);
+        rideService.insert(ride);
         return Result.success();
+    }
+
+    /**
+     * 查询最近的骑行团
+     * @param name
+     * @return
+     */
+    @GetMapping("/list")
+    public Result<List<RideOverviewVO>> list(String name)
+    {
+        log.info("查询最近的骑行团：{}",name);
+        List<RideOverviewVO> rideOverviewVOS= rideService.list(name);
+        return Result.success(rideOverviewVOS);
     }
 }
