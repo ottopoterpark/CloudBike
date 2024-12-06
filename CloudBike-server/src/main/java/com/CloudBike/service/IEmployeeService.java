@@ -46,11 +46,6 @@ public interface IEmployeeService extends IService<Employee> {
      */
     Employee one(Integer id);
 
-    /**
-     * 修改员工信息
-     * @param employee
-     */
-    void modify(Employee employee);
 
     /**
      * （批量删除员工）

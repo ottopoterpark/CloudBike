@@ -11,24 +11,17 @@ import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.RideMapper;
 import com.CloudBike.result.PageResult;
 import com.CloudBike.service.IRideService;
-import com.CloudBike.vo.RideCheckDetailVO;
-import com.CloudBike.vo.RideCheckOverviewVO;
-import com.CloudBike.vo.RideDetailVO;
-import com.CloudBike.vo.RideOverviewVO;
+import com.CloudBike.vo.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
-import net.sf.jsqlparser.statement.ReturningClause;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -243,17 +236,25 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 throw new BaseException(MessageConstant.BUSY_DAY);
         }
 
-        // 5、如果用户帐号状态正常且当天无其他骑行活动，则允许加入
-        RideDetail rideDetail = new RideDetail();
-        rideDetail.setRideId(id);
-        rideDetail.setUserId(userId);
-        Db.save(rideDetail);
+        // 5、如果用户帐号状态正常且当天无其他骑行活动，则判断该活动是否还有名额
+        // 5.1、如果还有名额，则成功加入骑行团
+        if (ride.getParticipants() < ride.getMaxPeople())
+        {
+            // 骑行明细表添加
+            RideDetail rideDetail = new RideDetail();
+            rideDetail.setRideId(id);
+            rideDetail.setUserId(userId);
+            Db.save(rideDetail);
 
-        // 6、将骑行团的参与人数+1
-        Integer participants = ride.getParticipants() + 1;
-        lambdaUpdate()
-                .eq(Ride::getId, id)
-                .set(Ride::getParticipants, participants);
+            // 骑行团人数+1
+            Integer participants = ride.getParticipants() + 1;
+            lambdaUpdate()
+                    .eq(Ride::getId, id)
+                    .set(Ride::getParticipants, participants);
+        }
+
+        // 5.2、否则提醒人数已满
+        throw new BaseException(MessageConstant.TOO_HOT);
     }
 
     /**
@@ -293,10 +294,10 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 .in(User::getId, userIds)
                 .list();
         Map<Integer, String> phones = users.stream()
-                .filter(l->l.getPhone() != null&&!l.getPhone().isEmpty())
+                .filter(l -> l.getPhone() != null && !l.getPhone().isEmpty())
                 .collect(Collectors.toMap(User::getId, User::getPhone));
         Map<Integer, String> usernames = users.stream()
-                .filter(l->l.getUsername()!=null&&!l.getUsername().isEmpty())
+                .filter(l -> l.getUsername() != null && !l.getUsername().isEmpty())
                 .collect(Collectors.toMap(User::getId, User::getUsername));
 
         // 4、补充属性（用户名和联系方式）
@@ -312,14 +313,14 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 });
 
         // 5、对用户名进行模糊匹配筛选（如用户名不为空）
-        if (username!=null&&!username.isEmpty())
+        if (username != null && !username.isEmpty())
         {
             List<RideCheckOverviewVO> list = rideCheckOverviewVOS.stream()
                     .filter(l -> l.getUsername().contains(username))
                     .toList();
 
             // 5.1、如果结果为空，返回提示信息
-            if (list==null||list.isEmpty())
+            if (list == null || list.isEmpty())
                 throw new BaseException(MessageConstant.EMPTY_RESULT);
 
             // 5.2、封装分页查询结果
@@ -338,6 +339,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
     /**
      * 根据id查看骑行团信息详情
+     *
      * @param id
      * @return
      */
@@ -354,10 +356,10 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 .one();
 
         // 3、封装结果
-        RideCheckDetailVO rideCheckDetailVO=new RideCheckDetailVO();
-        BeanUtils.copyProperties(ride,rideCheckDetailVO);
+        RideCheckDetailVO rideCheckDetailVO = new RideCheckDetailVO();
+        BeanUtils.copyProperties(ride, rideCheckDetailVO);
         rideCheckDetailVO.setUsername(user.getUsername());
-        if (user.getPhone()!=null&&!user.getPhone().isEmpty())
+        if (user.getPhone() != null && !user.getPhone().isEmpty())
             rideCheckDetailVO.setPhone(user.getPhone());
 
         // 4、返回结果
@@ -366,6 +368,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
     /**
      * 审核骑行团信息
+     *
      * @param id
      * @param status
      */
@@ -374,8 +377,81 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
     public void check(Integer id, Integer status)
     {
         lambdaUpdate()
-                .eq(Ride::getId,id)
-                .set(Ride::getStatus,status)
+                .eq(Ride::getId, id)
+                .set(Ride::getStatus, status)
                 .update();
+    }
+
+    /**
+     * 查询我的骑行活动
+     *
+     * @param status
+     * @return
+     */
+    @Override
+    public List<RideRecordOverviewVO> history(Integer status)
+    {
+        // 1、获取用户信息
+        Integer userId = BaseContext.getCurrentId();
+
+        // 2、根据用户id查询所有活动
+        List<RideDetail> rideDetails = Db.lambdaQuery(RideDetail.class)
+                .eq(userId != null, RideDetail::getUserId, userId)
+                .list();
+        List<Integer> rideIds = rideDetails.stream()
+                .map(RideDetail::getRideId)
+                .toList();
+        if (rideIds == null || rideIds.isEmpty())
+            throw new BaseException(MessageConstant.EMPTY_RESULT);
+        List<Ride> rides = lambdaQuery()
+                .in(Ride::getId, rideIds)
+                .list();
+
+        // 3、将查询结果封装
+        List<RideRecordOverviewVO> rideRecordOverviewVOS = new ArrayList<>();
+        rides.stream()
+                .forEach(l ->
+                {
+                    RideRecordOverviewVO rideRecordOverviewVO = new RideRecordOverviewVO();
+                    BeanUtils.copyProperties(l, rideRecordOverviewVO);
+                    if (l.getImage1()!= null && !l.getImage1().isEmpty())
+                        rideRecordOverviewVO.setImage(l.getImage1());
+                    else if (l.getImage2()!= null && !l.getImage2().isEmpty())
+                        rideRecordOverviewVO.setImage(l.getImage2());
+                    else if (l.getImage3()!= null && !l.getImage3().isEmpty())
+                        rideRecordOverviewVO.setImage(l.getImage3());
+                    rideRecordOverviewVOS.add(rideRecordOverviewVO);
+                });
+
+        // 4、判断查询类型
+        List<RideRecordOverviewVO> result=new ArrayList<>();
+        // 4.1、如果查询类型为全部
+        if (status==StatusConstant.ALL)
+        {
+            result=rideRecordOverviewVOS.stream()
+                    .sorted(Comparator.comparing(RideRecordOverviewVO::getDepartureTime).reversed())
+                    .toList();
+        }
+
+        // 4.2、如果查询类型为未开始
+        if (status == StatusConstant.PREPARED)
+        {
+            result = rideRecordOverviewVOS.stream()
+                    .filter(l -> l.getDepartureTime().isAfter(LocalDateTime.now()))
+                    .sorted(Comparator.comparing(RideRecordOverviewVO::getDepartureTime).reversed())
+                    .toList();
+        }
+
+        // 4.3、如果查询类型为已结束
+        if (status == StatusConstant.FINISHED)
+        {
+            result = rideRecordOverviewVOS.stream()
+                    .filter(l -> l.getDepartureTime().isBefore(LocalDateTime.now()))
+                    .sorted(Comparator.comparing(RideRecordOverviewVO::getDepartureTime).reversed())
+                    .toList();
+        }
+
+        // 5、返回结果
+        return result;
     }
 }

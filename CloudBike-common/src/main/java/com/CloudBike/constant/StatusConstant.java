@@ -27,4 +27,17 @@ public class StatusConstant {
      */
     public static final Integer REJECTED = 2;
 
+    /**
+     * 骑行记录：全部
+     */
+    public static final Integer ALL = 0;
+    /**
+     * 骑行记录：未开始
+     */
+    public static final Integer PREPARED = 1;
+    /**
+     * 骑行记录：已结束
+     */
+    public static final Integer FINISHED = 2;
+
 }

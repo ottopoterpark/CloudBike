@@ -27,6 +27,7 @@ public class MessageConstant {
     public static final String OLDPASSWORD_ERROR = "原始密码有误";
     public static final String UPLOAD_FAILED = "文件上传失败";
     public static final String BUSY_DAY = "当天已有其他活动";
+    public static final String TOO_HOT="当前活动太火爆，人数已满！";
 
     /**
      * 空结果提示信息

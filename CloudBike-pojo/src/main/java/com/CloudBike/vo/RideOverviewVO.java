@@ -1,7 +1,6 @@
 package com.CloudBike.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;

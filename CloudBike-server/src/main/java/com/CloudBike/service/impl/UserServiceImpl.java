@@ -7,12 +7,14 @@ import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.UserMapper;
 import com.CloudBike.properties.WeChatProperties;
 import com.CloudBike.service.IUserService;
+import com.CloudBike.vo.RideRecordOverviewVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -68,7 +70,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         {
             user = User.builder()
                     .openid(openid)
-                    .username("用户"+ UUID.randomUUID())
+                    .username("用户"+ Long.parseLong(UUID.randomUUID().toString().replace("-","").substring(0,15),16))
                     .build();
             save(user);
         }
@@ -76,4 +78,5 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 返回微信用户对象
         return user;
     }
+
 }

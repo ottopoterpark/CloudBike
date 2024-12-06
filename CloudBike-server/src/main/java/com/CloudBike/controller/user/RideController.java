@@ -7,6 +7,7 @@ import com.CloudBike.service.IRideService;
 import com.CloudBike.service.impl.RideServiceImpl;
 import com.CloudBike.vo.RideDetailVO;
 import com.CloudBike.vo.RideOverviewVO;
+import com.CloudBike.vo.RideRecordOverviewVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -80,4 +81,18 @@ public class RideController {
         rideService.join(id);
         return Result.success();
     }
+
+    /**
+     * 查询我的骑行活动
+     * @param status
+     * @return
+     */
+    @GetMapping("/history")
+    public Result<List<RideRecordOverviewVO>> history(Integer status)
+    {
+        log.info("查询我的骑行活动：{}",status);
+        List<RideRecordOverviewVO> list=rideService.history(status);
+        return Result.success(list);
+    }
+
 }

@@ -6,6 +6,7 @@ import com.CloudBike.result.PageResult;
 import com.CloudBike.vo.RideCheckDetailVO;
 import com.CloudBike.vo.RideDetailVO;
 import com.CloudBike.vo.RideOverviewVO;
+import com.CloudBike.vo.RideRecordOverviewVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -65,4 +66,11 @@ public interface IRideService extends IService<Ride> {
      * @param status
      */
     void check(Integer id, Integer status);
+
+    /**
+     * 查询我的骑行活动
+     * @param status
+     * @return
+     */
+    List<RideRecordOverviewVO> history(Integer status);
 }

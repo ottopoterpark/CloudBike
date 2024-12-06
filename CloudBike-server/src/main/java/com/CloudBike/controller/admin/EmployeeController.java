@@ -106,20 +106,6 @@ public class EmployeeController {
         return Result.success(employee);
     }
 
-
-    /**
-     * 修改员工信息
-     * @param employee
-     * @return
-     */
-    @PutMapping()
-    public Result modify(@RequestBody Employee employee)
-    {
-        log.info("员工信息修改：{}",employee);
-        employeeService.modify(employee);
-        return Result.success();
-    }
-
     /**
      * （批量）删除
      * @param ids

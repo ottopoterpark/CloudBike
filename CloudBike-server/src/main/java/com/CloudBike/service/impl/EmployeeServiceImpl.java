@@ -172,62 +172,6 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
     }
 
     /**
-     * 修改员工信息
-     *
-     * @param employee
-     */
-    @Override
-    @Transactional
-    public void modify(Employee employee)
-    {
-        // 1、获取需要修改的员工信息
-        Integer empId = employee.getId();
-
-        // 2、获取后台员工信息
-        Integer operatorId = BaseContext.getCurrentId();
-        Employee operator = getById(operatorId);
-
-        // 3、获取相同用户名的员工id
-        List<Integer> ids = lambdaQuery()
-                .eq(Employee::getUsername, employee.getUsername())
-                .list()
-                .stream()
-                .map(Employee::getId)
-                .toList();
-
-        // 4、如果是管理员操作或自己信息修改，则允许
-        if (empId == operatorId || operator.getAuthority() == AuthorityConstant.ADMINISTRATOR)
-        {
-            // 4.1、如果用户名无重复，则更新
-            if (ids == null || ids.isEmpty())
-            {
-                lambdaUpdate()
-                        .eq(Employee::getId, empId)
-                        .set(employee.getUsername() != null && !employee.getUsername().isEmpty(), Employee::getUsername, employee.getUsername())
-                        .set(employee.getName() != null && !employee.getName().isEmpty(), Employee::getName, employee.getName())
-                        .update();
-                return;
-            }
-
-            // 4.2、如果用户名与待修改员工原用户名相同，也允许修改
-            if (ids.size() == 1 && ids.get(0) == empId)
-            {
-                lambdaUpdate()
-                        .eq(Employee::getId, empId)
-                        .set(employee.getUsername() != null && !employee.getUsername().isEmpty(), Employee::getUsername, employee.getUsername())
-                        .set(employee.getName() != null && !employee.getName().isEmpty(), Employee::getName, employee.getName())
-                        .update();
-                return;
-            }
-
-            // 4.3、用户名重复，无法修改
-            throw new BaseException(MessageConstant.DUPLICATE_USERNAME);
-        }
-        // 5、否则不允许修改
-        throw new BaseException(MessageConstant.AUTHORITY_TOO_LOW);
-    }
-
-    /**
      * （批量）删除员工
      *
      * @param ids
