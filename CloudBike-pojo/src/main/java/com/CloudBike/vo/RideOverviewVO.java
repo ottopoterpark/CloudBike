@@ -30,7 +30,7 @@ public class RideOverviewVO implements Serializable {
     /**
      * 骑行团出发时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime departureTime;
     /**
      * 参与人数

@@ -1,5 +1,6 @@
 package com.CloudBike.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -29,6 +30,7 @@ public class RideDetailVO implements Serializable {
     /**
      * 出发时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime departureTime;
     /**
      * 集合地点

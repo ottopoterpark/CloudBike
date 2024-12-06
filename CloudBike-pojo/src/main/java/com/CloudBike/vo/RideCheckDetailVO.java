@@ -1,8 +1,10 @@
 package com.CloudBike.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * 骑行团后台审核详情VO
@@ -53,4 +55,9 @@ public class RideCheckDetailVO implements Serializable {
      * 限制人数
      */
     private Integer maxPeople;
+    /**
+     * 出发时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime departureTime;
 }

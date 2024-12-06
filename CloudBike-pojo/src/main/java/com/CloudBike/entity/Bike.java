@@ -25,20 +25,35 @@ public class Bike implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键
+     * 主键（单车编号）
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
-     * 自行车类型
+     * 单车编号
      */
-    private String type;
+    private String number;
 
     /**
-     * 图片
+     * 自行车类型（0：公路车，1：旅行车，2：折叠车，3：死飞，4：山地车，5：其他）
      */
-    private String pic;
+    private Integer type;
+
+    /**
+     * 图片1
+     */
+    private String pic1;
+
+    /**
+     * 图片2
+     */
+    private String pic2;
+
+    /**
+     * 图片3
+     */
+    private String pic3;
 
     /**
      * 售价
@@ -46,7 +61,7 @@ public class Bike implements Serializable {
     private Integer price;
 
     /**
-     * 状态（0：正常，1：租赁中，2：已售，3：待归还）
+     * 状态（0：正常，1：待提车，2：租赁中，3：已售，4：待归还）
      */
     private Integer status;
 

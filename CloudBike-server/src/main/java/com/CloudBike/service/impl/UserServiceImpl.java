@@ -57,7 +57,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 //        String json = HttpClientUtil.doGet(loginUrl, paramMap);         // 获得响应结果
 //        JSONObject jsonObject = JSON.parseObject(json);                 // 解析响应结果
 //        String openid = jsonObject.getString("openid");
-        String openid = "1";
+        String openid = "2";
 
         // 判断openid是否为空，如果为空表示登陆失败，抛出业务异常
         if (openid == null)

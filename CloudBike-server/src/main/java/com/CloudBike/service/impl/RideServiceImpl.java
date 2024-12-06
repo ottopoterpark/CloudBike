@@ -250,7 +250,11 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
             Integer participants = ride.getParticipants() + 1;
             lambdaUpdate()
                     .eq(Ride::getId, id)
-                    .set(Ride::getParticipants, participants);
+                    .set(Ride::getParticipants, participants)
+                    .update();
+
+            // 返回
+            return;
         }
 
         // 5.2、否则提醒人数已满
@@ -325,7 +329,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
             // 5.2、封装分页查询结果
             return PageResult.builder()
-                    .total(list.size())
+                    .total(Long.valueOf(list.size()))
                     .records(list)
                     .build();
         }
