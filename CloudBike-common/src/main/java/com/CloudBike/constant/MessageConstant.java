@@ -19,6 +19,7 @@ public class MessageConstant {
     public static final String AUTHORITY_TOO_LOW = "权限不足，请联系管理员";
     public static final String AUTHORITY_TOO_HIGN = "无法对管理员进行操作";
     public static final String CREDIT_LIMIT = "当前信用状态冻结，无法执行操作";
+    public static final String DISCOUNT_ILLEGAL = "非法套餐";
 
     /**
      * 操作有误提示信息
@@ -27,7 +28,7 @@ public class MessageConstant {
     public static final String OLDPASSWORD_ERROR = "原始密码有误";
     public static final String UPLOAD_FAILED = "文件上传失败";
     public static final String BUSY_DAY = "当天已有其他活动";
-    public static final String TOO_HOT="当前活动太火爆，人数已满！";
+    public static final String TOO_HOT = "当前活动太火爆，人数已满！";
 
     /**
      * 空结果提示信息

@@ -1,20 +1,21 @@
 package com.CloudBike.service.impl;
 
+import com.CloudBike.constant.DiscountConstant;
 import com.CloudBike.constant.MessageConstant;
+import com.CloudBike.context.BaseContext;
 import com.CloudBike.dto.UserLoginDTO;
 import com.CloudBike.entity.User;
 import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.UserMapper;
 import com.CloudBike.properties.WeChatProperties;
 import com.CloudBike.service.IUserService;
-import com.CloudBike.vo.RideRecordOverviewVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -43,6 +44,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @return
      */
     @Override
+    @Transactional
     public User login(UserLoginDTO userLoginDTO)
     {
         // 调用微信接口服务，获得当前微信用户的openid
@@ -79,4 +81,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return user;
     }
 
+    /**
+     * 充值
+     * @param discount
+     */
+    @Override
+    @Transactional
+    public void deposit(Integer discount)
+    {
+        // 1、获取当前用户信息
+        Integer userId = BaseContext.getCurrentId();
+        User user = getById(userId);
+        Integer balance = user.getBalance();
+
+        // 2、获取套餐信息
+        balance += switch (discount)
+        {
+            case 1-> DiscountConstant.DISCOUNT_1;
+            case 2-> DiscountConstant.DISCOUNT_2;
+            case 3-> DiscountConstant.DISCOUNT_3;
+            case 4-> DiscountConstant.DISCOUNT_4;
+            case 5-> DiscountConstant.DISCOUNT_5;
+            case 6-> DiscountConstant.DISCOUNT_6;
+            default -> throw new BaseException(MessageConstant.DISCOUNT_ILLEGAL);
+        };
+
+        // 3、更新虚拟货币
+        lambdaUpdate()
+                .eq(userId!=null,User::getId,userId)
+                .set(balance!=null,User::getBalance,balance)
+                .update();
+    }
 }

@@ -7,14 +7,12 @@ import com.CloudBike.properties.JwtProperties;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.IUserService;
 import com.CloudBike.utils.JwtUtil;
-import com.CloudBike.vo.RideRecordOverviewVO;
 import com.CloudBike.vo.UserLoginVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -61,6 +59,19 @@ public class UserController {
 
         // 返回结果
         return Result.success(data);
+    }
+
+    /**
+     * 充值
+     * @param discount
+     * @return
+     */
+    @PutMapping("/deposit")
+    public Result deposit(Integer discount)
+    {
+        log.info("充值：{}",discount);
+        userService.deposit(discount);
+        return Result.success();
     }
 
 }
