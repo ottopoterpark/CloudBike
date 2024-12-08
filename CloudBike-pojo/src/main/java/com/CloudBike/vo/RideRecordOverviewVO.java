@@ -36,4 +36,8 @@ public class RideRecordOverviewVO {
      * 图片
      */
     private String image;
+    /**
+     * 申请状态（0：审核中，1：已通过，2：已驳回，3：已结束）
+     */
+    private Integer status;
 }

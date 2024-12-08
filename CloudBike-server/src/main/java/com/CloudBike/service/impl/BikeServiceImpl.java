@@ -16,6 +16,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -108,5 +109,28 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
                 .total(total)
                 .records(bikeCheckOverviewVOS)
                 .build();
+    }
+
+    /**
+     * 新增单车
+     * @param bike
+     */
+    @Override
+    @Transactional
+    public void insert(Bike bike)
+    {
+        // 1、检验单车编号的唯一性
+        // 1.1、查询单车编号相同的单车
+        String number = bike.getNumber();
+        List<Bike> bikes = lambdaQuery()
+                .eq(Bike::getNumber, number)
+                .list();
+
+        // 1.2、如果存在则返回提示信息
+        if (bikes!=null&&!bikes.isEmpty())
+            throw new BaseException(MessageConstant.DUPLICATE_NUMBER);
+
+        // 1.3、如果不存在则允许新增
+        save(bike);
     }
 }

@@ -107,14 +107,14 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
     @Override
     public List<RideOverviewVO> list(String name)
     {
-        // 1、查询已通过审核，且未开始的骑行团活动，根据参与人数和更新时间排序
+        // 1、查询已通过审核，且未开始的骑行团活动，根据参与人数和出发时间排序
         List<Ride> list = lambdaQuery()
                 .like(name != null && !name.isEmpty(), Ride::getName, name)
                 .eq(Ride::getStatus, StatusConstant.PASSED)
                 .apply("participants < max_people")
-                .gt(Ride::getDepartureTime, LocalDateTime.now())
+                .gt(Ride::getDepartureTime, LocalDateTime.now().plusHours(2))
                 .orderByDesc(Ride::getParticipants)
-                .orderByDesc(Ride::getUpdateTime)
+                .orderByAsc(Ride::getDepartureTime)
                 .list();
 
         // 2、如果无符合条件的结果，返回提示信息
@@ -378,11 +378,33 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
      */
     @Override
     @Transactional
-    public void check(Integer id, Integer status)
+    public void check(Integer id, String reason, Integer status)
     {
+        // 1、如果审核状态为驳回，发起者发起骑行次数-1
+        if (status == StatusConstant.REJECTED)
+        {
+            // 1.1、获取骑行信息
+            Ride ride = getById(id);
+
+            // 1.2、获取发起者信息
+            Integer userId = ride.getUserId();
+            User user = Db.lambdaQuery(User.class)
+                    .eq(User::getId, userId)
+                    .one();
+
+            // 1.3、将发起者发起骑行次数-1
+            Integer rideTimes = user.getRideTimes() - 1;
+            Db.lambdaUpdate(User.class)
+                    .eq(User::getId,userId)
+                    .set(User::getRideTimes,rideTimes)
+                    .update();
+        }
+
+        // 2、更新审核状态
         lambdaUpdate()
                 .eq(Ride::getId, id)
                 .set(Ride::getStatus, status)
+                .set(reason != null && !reason.isEmpty(), Ride::getReason, reason)
                 .update();
     }
 
@@ -418,21 +440,21 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 {
                     RideRecordOverviewVO rideRecordOverviewVO = new RideRecordOverviewVO();
                     BeanUtils.copyProperties(l, rideRecordOverviewVO);
-                    if (l.getImage1()!= null && !l.getImage1().isEmpty())
+                    if (l.getImage1() != null && !l.getImage1().isEmpty())
                         rideRecordOverviewVO.setImage(l.getImage1());
-                    else if (l.getImage2()!= null && !l.getImage2().isEmpty())
+                    else if (l.getImage2() != null && !l.getImage2().isEmpty())
                         rideRecordOverviewVO.setImage(l.getImage2());
-                    else if (l.getImage3()!= null && !l.getImage3().isEmpty())
+                    else if (l.getImage3() != null && !l.getImage3().isEmpty())
                         rideRecordOverviewVO.setImage(l.getImage3());
                     rideRecordOverviewVOS.add(rideRecordOverviewVO);
                 });
 
         // 4、判断查询类型
-        List<RideRecordOverviewVO> result=new ArrayList<>();
+        List<RideRecordOverviewVO> result = new ArrayList<>();
         // 4.1、如果查询类型为全部
-        if (status==StatusConstant.ALL)
+        if (status == StatusConstant.ALL)
         {
-            result=rideRecordOverviewVOS.stream()
+            result = rideRecordOverviewVOS.stream()
                     .sorted(Comparator.comparing(RideRecordOverviewVO::getDepartureTime).reversed())
                     .toList();
         }
@@ -456,6 +478,8 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         }
 
         // 5、返回结果
+        if (result == null || result.isEmpty())
+            throw new BaseException(MessageConstant.EMPTY_RESULT);
         return result;
     }
 }

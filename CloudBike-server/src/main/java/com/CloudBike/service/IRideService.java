@@ -22,12 +22,14 @@ import java.util.List;
 public interface IRideService extends IService<Ride> {
     /**
      * 申请骑行团
+     *
      * @param ride
      */
     void insert(Ride ride);
 
     /**
      * 查询最近的骑行团
+     *
      * @param name
      * @return
      */
@@ -35,6 +37,7 @@ public interface IRideService extends IService<Ride> {
 
     /**
      * 根据id查询骑行团详情
+     *
      * @param id
      * @return
      */
@@ -42,12 +45,14 @@ public interface IRideService extends IService<Ride> {
 
     /**
      * 加入骑行团
+     *
      * @param id
      */
     void join(Integer id);
 
     /**
      * 骑行团信息分页查询
+     *
      * @param rideInfoPageQuery
      * @return
      */
@@ -55,6 +60,7 @@ public interface IRideService extends IService<Ride> {
 
     /**
      * 根据id查看骑行团信息详情
+     *
      * @param id
      * @return
      */
@@ -62,13 +68,15 @@ public interface IRideService extends IService<Ride> {
 
     /**
      * 审核骑行团信息
+     *
      * @param id
      * @param status
      */
-    void check(Integer id, Integer status);
+    void check(Integer id, String reason, Integer status);
 
     /**
      * 查询我的骑行活动
+     *
      * @param status
      * @return
      */

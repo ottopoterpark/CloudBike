@@ -3,6 +3,8 @@ package com.CloudBike.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,6 +24,7 @@ import lombok.experimental.Accessors;
 @TableName("ride_detail")
 public class RideDetail implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

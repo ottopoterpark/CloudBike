@@ -3,6 +3,8 @@ package com.CloudBike.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -17,7 +19,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author unique
- * @since 2024-12-06
+ * @since 2024-12-08
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -25,6 +27,7 @@ import lombok.experimental.Accessors;
 @TableName("ride")
 public class Ride implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -77,13 +80,8 @@ public class Ride implements Serializable {
     /**
      * 申请时间
      */
-    private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updateTime;
+    private LocalDateTime createTime;
 
     /**
      * 申请状态（0：审核中，1：已通过，2：已驳回，3：已结束）
@@ -99,5 +97,10 @@ public class Ride implements Serializable {
      * 限制人数
      */
     private Integer maxPeople;
+
+    /**
+     * 审核意见
+     */
+    private String reason;
 
 }

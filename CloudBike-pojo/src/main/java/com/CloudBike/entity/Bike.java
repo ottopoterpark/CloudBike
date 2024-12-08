@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author unique
- * @since 2024-12-06
+ * @since 2024-12-08
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -59,6 +59,16 @@ public class Bike implements Serializable {
      * 售价
      */
     private Integer price;
+
+    /**
+     * 日租金
+     */
+    private Integer daily;
+
+    /**
+     * 月租金
+     */
+    private Integer monthly;
 
     /**
      * 状态（0：正常，1：待提车，2：租赁中，3：已售，4：待归还）

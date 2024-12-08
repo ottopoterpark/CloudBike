@@ -20,4 +20,10 @@ public interface IBikeService extends IService<Bike> {
      * @return
      */
     PageResult page(BikeInfoPageQuery bikeInfoPageQuery);
+
+    /**
+     * 新增单车
+     * @param bike
+     */
+    void insert(Bike bike);
 }
