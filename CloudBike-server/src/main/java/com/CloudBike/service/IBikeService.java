@@ -5,6 +5,8 @@ import com.CloudBike.entity.Bike;
 import com.CloudBike.result.PageResult;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 自行车表 服务类
@@ -39,4 +41,10 @@ public interface IBikeService extends IService<Bike> {
      * @param bike
      */
     void update(Bike bike);
+
+    /**
+     * 批量删除单车
+     * @param ids
+     */
+    void remove(List<Integer> ids);
 }

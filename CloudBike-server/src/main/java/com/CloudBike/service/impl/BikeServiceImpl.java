@@ -173,4 +173,16 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
         // 3、修改单车基本信息
         updateById(bike);
     }
+
+    /**
+     * 批量删除单车
+     * @param ids
+     */
+    @Override
+    @Transactional
+    public void remove(List<Integer> ids)
+    {
+        // 根据ids批量删除单车
+        removeBatchByIds(ids);
+    }
 }

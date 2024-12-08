@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * <p>
  * 自行车表 前端控制器
@@ -75,6 +77,19 @@ public class BikeController {
     {
         log.info("修改单车基本信息：{}",bike);
         bikeService.update(bike);
+        return Result.success();
+    }
+
+    /**
+     * 批量删除单车
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public Result remove(@RequestParam List<Integer> ids)
+    {
+        log.info("批量删除单车：{}",ids);
+        bikeService.remove(ids);
         return Result.success();
     }
 }
