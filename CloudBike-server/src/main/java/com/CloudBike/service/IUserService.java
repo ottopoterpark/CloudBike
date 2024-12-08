@@ -32,4 +32,10 @@ public interface IUserService extends IService<User> {
      * @return
      */
     UserInfoDTO one();
+
+    /**
+     * 修改个人信息
+     * @param userInfoDTO
+     */
+    void update(UserInfoDTO userInfoDTO);
 }

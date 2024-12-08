@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -59,7 +60,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 //        String json = HttpClientUtil.doGet(loginUrl, paramMap);         // 获得响应结果
 //        JSONObject jsonObject = JSON.parseObject(json);                 // 解析响应结果
 //        String openid = jsonObject.getString("openid");
-        String openid = "2";
+        String openid = "3";
 
         // 判断openid是否为空，如果为空表示登陆失败，抛出业务异常
         if (openid == null)
@@ -134,5 +135,41 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         // 4、返回结果
         return userInfoDTO;
+    }
+
+    /**
+     * 修改个人信息
+     * @param userInfoDTO
+     */
+    @Override
+    @Transactional
+    public void update(UserInfoDTO userInfoDTO)
+    {
+        // 1、获取当前用户id
+        Integer userId = BaseContext.getCurrentId();
+
+        // 2、对用户名进行唯一校验
+        // 2.1、查询用户名一致的用户
+        String username = userInfoDTO.getUsername();
+        String phone = userInfoDTO.getPhone();
+        User user = lambdaQuery()
+                .eq(username != null && !username.isEmpty(), User::getUsername, username)
+                .one();
+
+        // 2.2、如果无或者只有一个用户id，且为当前用户id，则允许修改
+        if (user!=null)
+        {
+            Integer id = user.getId();
+            // 2.3、如果用户id不为当前用户id，则返回提示信息
+            if (userId!=id)
+                throw new BaseException(MessageConstant.DUPLICATE_USERNAME);
+        }
+
+        // 3、对用户信息进行修改
+        lambdaUpdate()
+                .eq(User::getId,userId)
+                .set(username!=null&&!username.isEmpty(),User::getUsername,username)
+                .set(phone!=null&&!phone.isEmpty(),User::getPhone,phone)
+                .update();
     }
 }

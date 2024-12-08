@@ -87,4 +87,17 @@ public class UserController {
         return Result.success(userInfoDTO);
     }
 
+    /**
+     * 修改个人信息
+     * @param userInfoDTO
+     * @return
+     */
+    @PutMapping
+    public Result update(UserInfoDTO userInfoDTO)
+    {
+        log.info("修改个人信息：{}",userInfoDTO);
+        userService.update(userInfoDTO);
+        return Result.success();
+    }
+
 }
