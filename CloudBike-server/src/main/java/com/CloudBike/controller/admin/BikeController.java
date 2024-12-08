@@ -51,4 +51,30 @@ public class BikeController {
         bikeService.insert(bike);
         return Result.success();
     }
+
+    /**
+     * 根据id查询单车详情
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result<Bike> getById(@PathVariable Integer id)
+    {
+        log.info("查看单车详情：{}",id);
+        Bike bike=bikeService.get(id);
+        return Result.success(bike);
+    }
+
+    /**
+     * 修改单车基本信息
+     * @param bike
+     * @return
+     */
+    @PutMapping
+    public Result update(@RequestBody Bike bike)
+    {
+        log.info("修改单车基本信息：{}",bike);
+        bikeService.update(bike);
+        return Result.success();
+    }
 }

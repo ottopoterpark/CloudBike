@@ -9,6 +9,7 @@ import com.CloudBike.entity.Order;
 import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.BikeMapper;
 import com.CloudBike.result.PageResult;
+import com.CloudBike.result.Result;
 import com.CloudBike.service.IBikeService;
 import com.CloudBike.vo.BikeCheckOverviewVO;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,6 +18,8 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -132,5 +135,42 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
 
         // 1.3、如果不存在则允许新增
         save(bike);
+    }
+
+    /**
+     * 根据id查询单车详情
+     * @param id
+     * @return
+     */
+    @Override
+    public Bike get(Integer id)
+    {
+        // 根据id查询
+        return getById(id);
+    }
+
+    /**
+     * 修改单车基本信息
+     * @param bike
+     */
+    @Override
+    @Transactional
+    public void update(Bike bike)
+    {
+        // 1、获取单车id
+        Integer id = bike.getId();
+
+        // 2、判断单车编号是否重复
+        // 2.1、查询单车编号相同的单车
+        Bike one = lambdaQuery()
+                .eq(Bike::getNumber,bike.getNumber())
+                .one();
+
+        // 2.2、如果无或者该单车id与修改的单车id不同，则不允许修改
+        if (one!=null&&one.getId()!=id)
+            throw new BaseException(MessageConstant.DUPLICATE_NUMBER);
+
+        // 3、修改单车基本信息
+        updateById(bike);
     }
 }

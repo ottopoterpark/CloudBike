@@ -26,4 +26,17 @@ public interface IBikeService extends IService<Bike> {
      * @param bike
      */
     void insert(Bike bike);
+
+    /**
+     * 根据id查询订单详情
+     * @param id
+     * @return
+     */
+    Bike get(Integer id);
+
+    /**
+     * 修改单车基本信息
+     * @param bike
+     */
+    void update(Bike bike);
 }
