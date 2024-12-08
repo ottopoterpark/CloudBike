@@ -3,6 +3,7 @@ package com.CloudBike.service.impl;
 import com.CloudBike.constant.DiscountConstant;
 import com.CloudBike.constant.MessageConstant;
 import com.CloudBike.context.BaseContext;
+import com.CloudBike.dto.UserInfoDTO;
 import com.CloudBike.dto.UserLoginDTO;
 import com.CloudBike.entity.User;
 import com.CloudBike.exception.BaseException;
@@ -12,6 +13,7 @@ import com.CloudBike.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -111,5 +113,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 .eq(userId!=null,User::getId,userId)
                 .set(balance!=null,User::getBalance,balance)
                 .update();
+    }
+
+    /**
+     * 查看个人信息
+     * @return
+     */
+    @Override
+    public UserInfoDTO one()
+    {
+        // 1、获取当前用户id
+        Integer userId = BaseContext.getCurrentId();
+
+        // 2、根据用户id查询用户信息
+        User user = getById(userId);
+
+        // 3、封装结果
+        UserInfoDTO userInfoDTO = new UserInfoDTO();
+        BeanUtils.copyProperties(user,userInfoDTO);
+
+        // 4、返回结果
+        return userInfoDTO;
     }
 }

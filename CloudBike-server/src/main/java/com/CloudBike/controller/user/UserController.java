@@ -1,6 +1,7 @@
 package com.CloudBike.controller.user;
 
 import com.CloudBike.constant.JwtClaimsConstant;
+import com.CloudBike.dto.UserInfoDTO;
 import com.CloudBike.dto.UserLoginDTO;
 import com.CloudBike.entity.User;
 import com.CloudBike.properties.JwtProperties;
@@ -72,6 +73,18 @@ public class UserController {
         log.info("充值：{}",discount);
         userService.deposit(discount);
         return Result.success();
+    }
+
+    /**
+     * 查看个人信息
+     * @return
+     */
+    @GetMapping
+    public Result<UserInfoDTO> one()
+    {
+        log.info("查看个人信息");
+        UserInfoDTO userInfoDTO=userService.one();
+        return Result.success(userInfoDTO);
     }
 
 }

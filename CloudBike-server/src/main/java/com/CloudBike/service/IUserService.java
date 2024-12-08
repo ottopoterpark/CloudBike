@@ -1,5 +1,6 @@
 package com.CloudBike.service;
 
+import com.CloudBike.dto.UserInfoDTO;
 import com.CloudBike.dto.UserLoginDTO;
 import com.CloudBike.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -25,4 +26,10 @@ public interface IUserService extends IService<User> {
      * @param discount
      */
     void deposit(Integer discount);
+
+    /**
+     * 查看个人信息
+     * @return
+     */
+    UserInfoDTO one();
 }
