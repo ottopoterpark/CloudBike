@@ -1,6 +1,7 @@
 package com.CloudBike.controller.admin;
 
 
+import com.CloudBike.dto.BikeInfoDTO;
 import com.CloudBike.dto.BikeInfoPageQuery;
 import com.CloudBike.entity.Bike;
 import com.CloudBike.result.PageResult;
@@ -43,14 +44,14 @@ public class BikeController {
 
     /**
      * 新增单车
-     * @param bike
+     * @param bikeInfoDTO
      * @return
      */
     @PostMapping
-    public Result save(@RequestBody Bike bike)
+    public Result save(@RequestBody BikeInfoDTO bikeInfoDTO)
     {
-        log.info("新增单车：{}",bike);
-        bikeService.insert(bike);
+        log.info("新增单车：{}",bikeInfoDTO);
+        bikeService.insert(bikeInfoDTO);
         return Result.success();
     }
 
@@ -60,23 +61,23 @@ public class BikeController {
      * @return
      */
     @GetMapping("/{id}")
-    public Result<Bike> getById(@PathVariable Integer id)
+    public Result<BikeInfoDTO> getById(@PathVariable Integer id)
     {
         log.info("查看单车详情：{}",id);
-        Bike bike=bikeService.get(id);
-        return Result.success(bike);
+        BikeInfoDTO bikeInfoDTO= bikeService.get(id);
+        return Result.success(bikeInfoDTO);
     }
 
     /**
      * 修改单车基本信息
-     * @param bike
+     * @param bikeInfoDTO
      * @return
      */
     @PutMapping
-    public Result update(@RequestBody Bike bike)
+    public Result update(@RequestBody BikeInfoDTO bikeInfoDTO)
     {
-        log.info("修改单车基本信息：{}",bike);
-        bikeService.update(bike);
+        log.info("修改单车基本信息：{}",bikeInfoDTO);
+        bikeService.update(bikeInfoDTO);
         return Result.success();
     }
 

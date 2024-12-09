@@ -10,6 +10,9 @@ import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.UserMapper;
 import com.CloudBike.properties.WeChatProperties;
 import com.CloudBike.service.IUserService;
+import com.CloudBike.utils.HttpClientUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 
@@ -56,11 +59,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         paramMap.put("secret", weChatProperties.getSecret());
         paramMap.put("js_code", userLoginDTO.getCode());
         paramMap.put("grant_type", "authorization_code");
-//        todo 后端开发跳过微信登陆
-//        String json = HttpClientUtil.doGet(loginUrl, paramMap);         // 获得响应结果
-//        JSONObject jsonObject = JSON.parseObject(json);                 // 解析响应结果
-//        String openid = jsonObject.getString("openid");
-        String openid = "3";
+        String json = HttpClientUtil.doGet(loginUrl, paramMap);         // 获得响应结果
+        JSONObject jsonObject = JSON.parseObject(json);                 // 解析响应结果
+        String openid = jsonObject.getString("openid");
+        //        todo 后端开发跳过微信登陆
+        if (openid == null || openid.isEmpty())
+            openid = "3";
 
         // 判断openid是否为空，如果为空表示登陆失败，抛出业务异常
         if (openid == null)
@@ -75,7 +79,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         {
             user = User.builder()
                     .openid(openid)
-                    .username("用户"+ Long.parseLong(UUID.randomUUID().toString().replace("-","").substring(0,15),16))
+                    .username("用户" + Long.parseLong(UUID.randomUUID().toString().replace("-", "").substring(0, 15), 16))
                     .build();
             save(user);
         }
@@ -86,6 +90,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     /**
      * 充值
+     *
      * @param discount
      */
     @Override
@@ -100,24 +105,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 2、获取套餐信息
         balance += switch (discount)
         {
-            case 1-> DiscountConstant.DISCOUNT_1;
-            case 2-> DiscountConstant.DISCOUNT_2;
-            case 3-> DiscountConstant.DISCOUNT_3;
-            case 4-> DiscountConstant.DISCOUNT_4;
-            case 5-> DiscountConstant.DISCOUNT_5;
-            case 6-> DiscountConstant.DISCOUNT_6;
+            case 1 -> DiscountConstant.DISCOUNT_1;
+            case 2 -> DiscountConstant.DISCOUNT_2;
+            case 3 -> DiscountConstant.DISCOUNT_3;
+            case 4 -> DiscountConstant.DISCOUNT_4;
+            case 5 -> DiscountConstant.DISCOUNT_5;
+            case 6 -> DiscountConstant.DISCOUNT_6;
             default -> throw new BaseException(MessageConstant.DISCOUNT_ILLEGAL);
         };
 
         // 3、更新虚拟货币
         lambdaUpdate()
-                .eq(userId!=null,User::getId,userId)
-                .set(balance!=null,User::getBalance,balance)
+                .eq(userId != null, User::getId, userId)
+                .set(balance != null, User::getBalance, balance)
                 .update();
     }
 
     /**
      * 查看个人信息
+     *
      * @return
      */
     @Override
@@ -131,7 +137,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         // 3、封装结果
         UserInfoDTO userInfoDTO = new UserInfoDTO();
-        BeanUtils.copyProperties(user,userInfoDTO);
+        BeanUtils.copyProperties(user, userInfoDTO);
 
         // 4、返回结果
         return userInfoDTO;
@@ -139,6 +145,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     /**
      * 修改个人信息
+     *
      * @param userInfoDTO
      */
     @Override
@@ -157,19 +164,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 .one();
 
         // 2.2、如果无或者只有一个用户id，且为当前用户id，则允许修改
-        if (user!=null)
+        if (user != null)
         {
             Integer id = user.getId();
             // 2.3、如果用户id不为当前用户id，则返回提示信息
-            if (userId!=id)
+            if (userId != id)
                 throw new BaseException(MessageConstant.DUPLICATE_USERNAME);
         }
 
         // 3、对用户信息进行修改
         lambdaUpdate()
-                .eq(User::getId,userId)
-                .set(username!=null&&!username.isEmpty(),User::getUsername,username)
-                .set(phone!=null&&!phone.isEmpty(),User::getPhone,phone)
+                .eq(User::getId, userId)
+                .set(username != null && !username.isEmpty(), User::getUsername, username)
+                .set(phone != null && !phone.isEmpty(), User::getPhone, phone)
                 .update();
     }
 }

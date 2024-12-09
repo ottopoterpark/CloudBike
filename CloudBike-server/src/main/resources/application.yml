@@ -4,6 +4,10 @@ server:
 spring:
   profiles:
     active: dev        # 激活配置环境
+  servlet:
+    multipart:
+      max-file-size: 100MB                       # 文件大小上限
+      max-request-size: 1000MB                   # 请求大小上限
   main:
     allow-circular-references: true     # 循环依赖
   datasource: # MySQL数据源配置

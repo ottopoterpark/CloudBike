@@ -3,6 +3,8 @@ package com.CloudBike.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,7 +16,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author unique
- * @since 2024-12-08
+ * @since 2024-12-09
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -22,10 +24,11 @@ import lombok.experimental.Accessors;
 @TableName("bike")
 public class Bike implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键（单车编号）
+     * 主键
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
@@ -36,29 +39,24 @@ public class Bike implements Serializable {
     private String number;
 
     /**
+     * 单车名称
+     */
+    private String name;
+
+    /**
      * 自行车类型（0：公路车，1：旅行车，2：折叠车，3：死飞，4：山地车，5：其他）
      */
     private Integer type;
 
     /**
-     * 图片1
-     */
-    private String pic1;
-
-    /**
-     * 图片2
-     */
-    private String pic2;
-
-    /**
-     * 图片3
-     */
-    private String pic3;
-
-    /**
      * 售价
      */
     private Integer price;
+
+    /**
+     * 图片路径
+     */
+    private String image;
 
     /**
      * 日租金
