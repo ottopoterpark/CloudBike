@@ -3,6 +3,7 @@ package com.CloudBike.service.impl;
 import com.CloudBike.constant.BusinessConstant;
 import com.CloudBike.constant.MessageConstant;
 import com.CloudBike.constant.StatusConstant;
+import com.CloudBike.constant.TypeConstant;
 import com.CloudBike.dto.BikeInfoDTO;
 import com.CloudBike.dto.BikeInfoPageQuery;
 import com.CloudBike.entity.Bike;
@@ -223,5 +224,61 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
     {
         // 根据ids批量删除单车
         removeBatchByIds(ids);
+    }
+
+    /**
+     * 单车分类查询
+     * @param type
+     * @return
+     */
+    @Override
+    public List<BikeInfoDTO> category(Integer type)
+    {
+        // 存放查询结果
+        List<Bike> bikes=new ArrayList<>();
+
+        // 1、如果是单车类型查询
+        if (type!= TypeConstant.DISCOUNT)
+            bikes = lambdaQuery()
+                    .eq(Bike::getType, type)                                 // 1.1、根据单车类型筛选
+                    .eq(Bike::getStatus, StatusConstant.AVAILABLE)           // 1.2、筛选空闲的单车
+                    .list();
+
+        // 2、如果是特惠查询
+        if (type==TypeConstant.DISCOUNT)
+            bikes=lambdaQuery()
+                    .eq(Bike::getStatus,StatusConstant.AVAILABLE)                   // 2.1、筛选空闲的单车
+                    .and(l->l
+                            .le(Bike::getPrice,TypeConstant.DISCOUNT_PRICE)         // 2.2、售价低于特惠售价阈值
+                            .or()                                                   //      或者
+                            .le(Bike::getMonthly,TypeConstant.DISCOUNT_MONTHLY))    //      月租金低于特惠月租金阈值
+                    .list();
+
+        // 3、如果查询结果为空，返回提示信息
+        if (bikes==null||bikes.isEmpty())
+            throw new BaseException(MessageConstant.EMPTY_RESULT);
+
+        // 4、封装结果
+        List<BikeInfoDTO> bikeInfoDTOS=new ArrayList<>();
+        bikes.stream()
+                .forEach(l->{
+
+                    // 4.1、属性拷贝
+                    BikeInfoDTO bikeInfoDTO=new BikeInfoDTO();
+                    BeanUtils.copyProperties(l, bikeInfoDTO);
+
+                    // 4.2、将图片路径字符串转换为集合
+                    String image = l.getImage();
+                    List<String> images = new ArrayList<>();
+                    if (image != null && !image.isEmpty())
+                        images = Arrays.asList(image.split(","));
+                    bikeInfoDTO.setImages(images);
+
+                    // 4.3、将DTO存入结果DTOS中
+                    bikeInfoDTOS.add(bikeInfoDTO);
+                });
+
+        // 5、返回结果
+        return bikeInfoDTOS;
     }
 }

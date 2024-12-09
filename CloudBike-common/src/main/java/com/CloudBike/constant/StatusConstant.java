@@ -51,4 +51,8 @@ public class StatusConstant {
      */
     public static final Integer TO_RETURN = 4;
 
+    /**
+     * 单车状态：空闲
+     */
+    public static final Integer AVAILABLE = 0;
 }

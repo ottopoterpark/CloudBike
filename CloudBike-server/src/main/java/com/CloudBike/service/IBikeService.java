@@ -26,7 +26,7 @@ public interface IBikeService extends IService<Bike> {
 
     /**
      * 新增单车
-     * @param bike
+     * @param bikeInfoDTO
      */
     void insert(BikeInfoDTO bikeInfoDTO);
 
@@ -39,7 +39,7 @@ public interface IBikeService extends IService<Bike> {
 
     /**
      * 修改单车基本信息
-     * @param bike
+     * @param bikeInfoDTO
      */
     void update(BikeInfoDTO bikeInfoDTO);
 
@@ -48,4 +48,11 @@ public interface IBikeService extends IService<Bike> {
      * @param ids
      */
     void remove(List<Integer> ids);
+
+    /**
+     * 单车分类查询
+     * @param type
+     * @return
+     */
+    List<BikeInfoDTO> category(Integer type);
 }
