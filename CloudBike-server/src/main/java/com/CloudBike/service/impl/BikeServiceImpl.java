@@ -117,8 +117,7 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
 
     /**
      * 新增单车
-     *
-     * @param bike
+     * @param bikeInfoDTO
      */
     @Override
     @Transactional
@@ -180,8 +179,7 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
 
     /**
      * 修改单车基本信息
-     *
-     * @param bike
+     * @param bikeInfoDTO
      */
     @Override
     @Transactional

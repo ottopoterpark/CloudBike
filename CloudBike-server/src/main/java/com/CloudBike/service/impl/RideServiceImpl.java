@@ -3,6 +3,7 @@ package com.CloudBike.service.impl;
 import com.CloudBike.constant.MessageConstant;
 import com.CloudBike.constant.StatusConstant;
 import com.CloudBike.context.BaseContext;
+import com.CloudBike.dto.RideInfoDTO;
 import com.CloudBike.dto.RideInfoPageQuery;
 import com.CloudBike.entity.Ride;
 import com.CloudBike.entity.RideDetail;
@@ -11,7 +12,6 @@ import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.RideMapper;
 import com.CloudBike.result.PageResult;
 import com.CloudBike.service.IRideService;
-import com.CloudBike.vo.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
@@ -36,14 +36,20 @@ import java.util.stream.Collectors;
 @Transactional
 public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IRideService {
 
+    private final RideMapper rideMapper;
+
+    public RideServiceImpl(RideMapper rideMapper)
+    {
+        this.rideMapper = rideMapper;
+    }
+
     /**
      * 申请骑行团
-     *
-     * @param ride
+     * @param rideInfoDTO
      */
     @Override
     @Transactional
-    public void insert(Ride ride)
+    public void insert(RideInfoDTO rideInfoDTO)
     {
         // 1、获取活动发起者信息
         Integer userId = BaseContext.getCurrentId();
@@ -76,12 +82,24 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                         return l.getDepartureTime().toLocalDate();
                     })
                     .collect(Collectors.toSet());
-            if (departureTimes.contains(ride.getDepartureTime().toLocalDate()))
+            if (departureTimes.contains(rideInfoDTO.getDepartureTime().toLocalDate()))
                 throw new BaseException(MessageConstant.BUSY_DAY);
         }
 
         // 4、如果用户信用状态正常且当天无其他骑行活动，允许申请
+        // 4.1、属性拷贝
+        Ride ride=new Ride();
+        BeanUtils.copyProperties(rideInfoDTO,ride);
         ride.setUserId(userId);
+
+        // 4.2、将图片路径集合转为字符串
+        List<String> images = rideInfoDTO.getImages();
+        String image=null;
+        if (images!=null&&!images.isEmpty())
+            image=String.join(",",images);
+        ride.setImage(image);
+
+        // 4.3、存储骑行团信息
         save(ride);
 
         // 5、更改用户的发起骑行次数（+1）
@@ -105,56 +123,60 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
      * @return
      */
     @Override
-    public List<RideOverviewVO> list(String name)
+    public List<RideInfoDTO> list(String name)
     {
-        // 1、查询已通过审核，且未开始的骑行团活动，根据参与人数和出发时间排序
+        // 1、根据条件筛选最近的骑行团活动
         List<Ride> list = lambdaQuery()
-                .like(name != null && !name.isEmpty(), Ride::getName, name)
-                .eq(Ride::getStatus, StatusConstant.PASSED)
-                .apply("participants < max_people")
-                .gt(Ride::getDepartureTime, LocalDateTime.now().plusHours(2))
-                .orderByDesc(Ride::getParticipants)
-                .orderByAsc(Ride::getDepartureTime)
+                .like(name != null && !name.isEmpty(), Ride::getName, name)     // 1.1、骑行团名称匹配（如有）
+                .eq(Ride::getStatus, StatusConstant.PASSED)                                // 1.2、骑行团状态为”已通过“
+                .apply("participants < max_people")                              // 1.3、报名名额未满
+                .gt(Ride::getDepartureTime, LocalDateTime.now().plusHours(2))              // 1.4、出发时间距现在最少2小时
+                .orderByDesc(Ride::getParticipants)                                        // 1.5、首先根据已报名人数降序
+                .orderByAsc(Ride::getDepartureTime)                                        //      再根据出发时间升序排序
                 .list();
 
         // 2、如果无符合条件的结果，返回提示信息
         if (list == null || list.isEmpty())
             throw new BaseException(MessageConstant.EMPTY_RESULT);
 
-        // 3、将查询信息转化为对应VO
-        List<RideOverviewVO> rideOverviewVOS = new ArrayList<>();
+        // 3、将查询信息转化为对应DTOS
+        List<RideInfoDTO> rideInfoDTOS = new ArrayList<>();
 
-        // 3.1、查询出对应活动的发起者id，与活动id组成Map
-        Map<Integer, Integer> userIds = list.stream()
-                .collect(Collectors.toMap(Ride::getId, Ride::getUserId));
+        // 3.1、获取这些活动的发起者id
+        List<Integer> userIds = list.stream()
+                .map(Ride::getUserId)
+                .toList();
 
         // 3.2、查询所有活动发起者的username，与用户id组成Map
         Map<Integer, String> usernames = Db.lambdaQuery(User.class)
-                .in(User::getId, userIds.values())
+                .in(User::getId, userIds)
                 .list()
                 .stream()
                 .collect(Collectors.toMap(User::getId, User::getUsername));
 
-        // 3.3、组装VO结果
+        // 3.3、组装DTO结果
         list.stream().forEach(l ->
         {
-            RideOverviewVO rideOverviewVO = new RideOverviewVO();
-            BeanUtils.copyProperties(l, rideOverviewVO);
-            String image = null;
-            if (l.getImage1() != null && !l.getImage1().isEmpty())
-                image = l.getImage1();
-            else if (l.getImage2() != null && !l.getImage2().isEmpty())
-                image = l.getImage2();
-            else if (l.getImage3() != null && !l.getImage3().isEmpty())
-                image = l.getImage3();
-            if (image != null && !image.isEmpty())
-                rideOverviewVO.setImage(image);
-            rideOverviewVO.setUsername(usernames.get(userIds.get(l.getId())));
-            rideOverviewVOS.add(rideOverviewVO);
+            // 3.4、属性拷贝
+            RideInfoDTO rideInfoDTO = new RideInfoDTO();
+            BeanUtils.copyProperties(l, rideInfoDTO);
+
+            // 3.5、将图片路径字符串转换为集合
+            String image = l.getImage();
+            List<String> images=new ArrayList<>();
+            if (image!=null&&!image.isEmpty())
+                images=Arrays.asList(image.split(","));
+            rideInfoDTO.setImages(images);
+
+            // 3.6、补充属性
+            rideInfoDTO.setUsername(usernames.get(l.getUserId()));
+
+            // 3.7、将DTO存入DTOS
+            rideInfoDTOS.add(rideInfoDTO);
         });
 
         // 4、返回结果
-        return rideOverviewVOS;
+        return rideInfoDTOS;
     }
 
     /**
@@ -164,7 +186,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
      * @return
      */
     @Override
-    public RideDetailVO one(Integer id)
+    public RideInfoDTO one(Integer id)
     {
         // 1、根据id查询骑行团信息
         Ride ride = getById(id);
@@ -175,14 +197,24 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 .eq(User::getId, userId)
                 .one();
 
-        // 3、将发起者用户名和发起骑行次数属性补充
-        RideDetailVO rideDetailVO = new RideDetailVO();
-        BeanUtils.copyProperties(ride, rideDetailVO);
-        rideDetailVO.setUsername(user.getUsername());
-        rideDetailVO.setRideTimes(user.getRideTimes());
+        // 3、封装属性
+        // 3.1、属性拷贝
+        RideInfoDTO rideInfoDTO=new RideInfoDTO();
+        BeanUtils.copyProperties(ride, rideInfoDTO);
+
+        // 3.2、属性补充
+        rideInfoDTO.setRideTimes(user.getRideTimes());
+        rideInfoDTO.setUsername(user.getUsername());
+
+        // 3.3、将图片路径字符串转换为集合
+        String image = ride.getImage();
+        List<String> images=new ArrayList<>();
+        if (image!=null&&!image.isEmpty())
+            images=Arrays.asList(image.split(","));
+        rideInfoDTO.setImages(images);
 
         // 返回结果
-        return rideDetailVO;
+        return rideInfoDTO;
     }
 
     /**
@@ -278,7 +310,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         Integer status = rideInfoPageQuery.getStatus();
         Page<Ride> p = Page.of(page, pageSize);
 
-        // 2、根据活动名称与审核状态进行查询
+        // 2、根据活动名称与审核状态进行筛选（如有）
         lambdaQuery()
                 .eq(status != null, Ride::getStatus, status)
                 .like(name != null && !name.isEmpty(), Ride::getName, name)
@@ -289,47 +321,54 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         if (p.getTotal() == 0)
             throw new BaseException(MessageConstant.EMPTY_RESULT);
 
-        // 3、获取名称和审核状态筛选后的活动发起者们
+        // 3、对结果进行属性补充
+        // 3.1、获取这些活动的发起者id
         List<Ride> rides = p.getRecords();
         Set<Integer> userIds = rides.stream()
                 .map(Ride::getUserId)
                 .collect(Collectors.toSet());
+
+        // 3.2、获取这些活动的发起者
         List<User> users = Db.lambdaQuery(User.class)
                 .in(User::getId, userIds)
                 .list();
+
+        // 3.3、获取发起者id和发起者电话组成的Map
         Map<Integer, String> phones = users.stream()
                 .filter(l -> l.getPhone() != null && !l.getPhone().isEmpty())
                 .collect(Collectors.toMap(User::getId, User::getPhone));
+
+        // 3.4、获取发起者id和发起者用户名组成的Map
         Map<Integer, String> usernames = users.stream()
                 .filter(l -> l.getUsername() != null && !l.getUsername().isEmpty())
                 .collect(Collectors.toMap(User::getId, User::getUsername));
 
-        // 4、补充属性（用户名和联系方式）
-        List<RideCheckOverviewVO> rideCheckOverviewVOS = new ArrayList<>();
+        // 3.5、补充属性（用户名和联系方式）
+        List<RideInfoDTO> rideInfoDTOS = new ArrayList<>();
         rides.stream()
                 .forEach(l ->
                 {
-                    RideCheckOverviewVO rideCheckOverviewVO = new RideCheckOverviewVO();
-                    BeanUtils.copyProperties(l, rideCheckOverviewVO);
-                    rideCheckOverviewVO.setUsername(usernames.get(l.getUserId()));
-                    rideCheckOverviewVO.setPhone(phones.get(l.getUserId()));
-                    rideCheckOverviewVOS.add(rideCheckOverviewVO);
+                    RideInfoDTO rideInfoDTO = new RideInfoDTO();
+                    BeanUtils.copyProperties(l, rideInfoDTO);
+                    rideInfoDTO.setUsername(usernames.get(l.getUserId()));
+                    rideInfoDTO.setPhone(phones.get(l.getUserId()));
+                    rideInfoDTOS.add(rideInfoDTO);
                 });
 
-        // 5、对用户名进行模糊匹配筛选（如用户名不为空）
+        // 5、对用户名进行模糊匹配筛选
         if (username != null && !username.isEmpty())
         {
-            List<RideCheckOverviewVO> list = rideCheckOverviewVOS.stream()
+            List<RideInfoDTO> list = rideInfoDTOS.stream()
                     .filter(l -> l.getUsername().contains(username))
                     .toList();
 
             // 5.1、如果结果为空，返回提示信息
-            if (list == null || list.isEmpty())
+            if (list.isEmpty())
                 throw new BaseException(MessageConstant.EMPTY_RESULT);
 
             // 5.2、封装分页查询结果
             return PageResult.builder()
-                    .total(Long.valueOf(list.size()))
+                    .total((long) list.size())
                     .records(list)
                     .build();
         }
@@ -337,7 +376,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         // 6、封装分页查询结果
         return PageResult.builder()
                 .total(p.getTotal())
-                .records(rideCheckOverviewVOS)
+                .records(rideInfoDTOS)
                 .build();
     }
 
@@ -348,7 +387,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
      * @return
      */
     @Override
-    public RideCheckDetailVO getone(Integer id)
+    public RideInfoDTO getone(Integer id)
     {
         // 1、根据id查询骑行团信息
         Ride ride = getById(id);
@@ -360,14 +399,24 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 .one();
 
         // 3、封装结果
-        RideCheckDetailVO rideCheckDetailVO = new RideCheckDetailVO();
-        BeanUtils.copyProperties(ride, rideCheckDetailVO);
-        rideCheckDetailVO.setUsername(user.getUsername());
+        // 3.1、属性拷贝
+        RideInfoDTO rideInfoDTO=new RideInfoDTO();
+        BeanUtils.copyProperties(ride, rideInfoDTO);
+
+        // 3.2、属性补充
+        rideInfoDTO.setUsername(user.getUsername());
         if (user.getPhone() != null && !user.getPhone().isEmpty())
-            rideCheckDetailVO.setPhone(user.getPhone());
+            rideInfoDTO.setPhone(user.getPhone());
+
+        // 3.3、将图片路径字符串转换为集合
+        String image = ride.getImage();
+        List<String> images=new ArrayList<>();
+        if (image != null && !image.isEmpty())
+            images=Arrays.asList(image.split(","));
+        rideInfoDTO.setImages(images);
 
         // 4、返回结果
-        return rideCheckDetailVO;
+        return rideInfoDTO;
     }
 
     /**
@@ -415,71 +464,83 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
      * @return
      */
     @Override
-    public List<RideRecordOverviewVO> history(Integer status)
+    public List<RideInfoDTO> history(Integer status)
     {
         // 1、获取用户信息
         Integer userId = BaseContext.getCurrentId();
 
-        // 2、根据用户id查询所有活动
+        // 2、获取该用户的所有活动
+        // 2.1、获取该用户参与的活动id
         List<RideDetail> rideDetails = Db.lambdaQuery(RideDetail.class)
-                .eq(userId != null, RideDetail::getUserId, userId)
+                .eq(RideDetail::getUserId, userId)
                 .list();
         List<Integer> rideIds = rideDetails.stream()
                 .map(RideDetail::getRideId)
                 .toList();
-        if (rideIds == null || rideIds.isEmpty())
+
+        // 2.2、如果结果为空，返回提示信息
+        if (rideIds.isEmpty())
             throw new BaseException(MessageConstant.EMPTY_RESULT);
+
+        // 2.3、根据活动id获取这些活动
         List<Ride> rides = lambdaQuery()
                 .in(Ride::getId, rideIds)
                 .list();
 
         // 3、将查询结果封装
-        List<RideRecordOverviewVO> rideRecordOverviewVOS = new ArrayList<>();
+        List<RideInfoDTO> rideInfoDTOS = new ArrayList<>();
         rides.stream()
                 .forEach(l ->
                 {
-                    RideRecordOverviewVO rideRecordOverviewVO = new RideRecordOverviewVO();
-                    BeanUtils.copyProperties(l, rideRecordOverviewVO);
-                    if (l.getImage1() != null && !l.getImage1().isEmpty())
-                        rideRecordOverviewVO.setImage(l.getImage1());
-                    else if (l.getImage2() != null && !l.getImage2().isEmpty())
-                        rideRecordOverviewVO.setImage(l.getImage2());
-                    else if (l.getImage3() != null && !l.getImage3().isEmpty())
-                        rideRecordOverviewVO.setImage(l.getImage3());
-                    rideRecordOverviewVOS.add(rideRecordOverviewVO);
+                    // 3.1、属性拷贝
+                    RideInfoDTO rideInfoDTO=new RideInfoDTO();
+                    BeanUtils.copyProperties(l, rideInfoDTO);
+
+                    // 3.2、将图片路径字符串转换为集合
+                    String image = l.getImage();
+                    List<String> images=new ArrayList<>();
+                    if (image != null && !image.isEmpty())
+                        images=Arrays.asList(image.split(","));
+                    rideInfoDTO.setImages(images);
+
+                    // 3.3、将DTO存入结果DTOS中
+                    rideInfoDTOS.add(rideInfoDTO);
                 });
 
         // 4、判断查询类型
-        List<RideRecordOverviewVO> result = new ArrayList<>();
+        List<RideInfoDTO> result = new ArrayList<>();
         // 4.1、如果查询类型为全部
         if (status == StatusConstant.ALL)
         {
-            result = rideRecordOverviewVOS.stream()
-                    .sorted(Comparator.comparing(RideRecordOverviewVO::getDepartureTime).reversed())
+            result = rideInfoDTOS.stream()
+                    .sorted(Comparator.comparing(RideInfoDTO::getDepartureTime))     // 按出发时间升序，展示最近
                     .toList();
         }
 
         // 4.2、如果查询类型为未开始
         if (status == StatusConstant.PREPARED)
         {
-            result = rideRecordOverviewVOS.stream()
+            result = rideInfoDTOS.stream()
                     .filter(l -> l.getDepartureTime().isAfter(LocalDateTime.now()))
-                    .sorted(Comparator.comparing(RideRecordOverviewVO::getDepartureTime).reversed())
+                    .sorted(Comparator.comparing(RideInfoDTO::getDepartureTime))     // 按出发时间升序，展示最近
                     .toList();
         }
 
         // 4.3、如果查询类型为已结束
         if (status == StatusConstant.FINISHED)
         {
-            result = rideRecordOverviewVOS.stream()
+            result = rideInfoDTOS.stream()
                     .filter(l -> l.getDepartureTime().isBefore(LocalDateTime.now()))
-                    .sorted(Comparator.comparing(RideRecordOverviewVO::getDepartureTime).reversed())
+                    .sorted(Comparator.comparing(RideInfoDTO::getDepartureTime))    // 按出发时间升序，展示最近
                     .toList();
         }
 
         // 5、返回结果
-        if (result == null || result.isEmpty())
+        // 5.1、如果筛选后结果为空，返回提示消息
+        if (result.isEmpty())
             throw new BaseException(MessageConstant.EMPTY_RESULT);
+
+        // 5.2、返回结果
         return result;
     }
 }

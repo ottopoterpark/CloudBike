@@ -1,13 +1,11 @@
 package com.CloudBike.controller.user;
 
 
+import com.CloudBike.dto.RideInfoDTO;
 import com.CloudBike.entity.Ride;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.IRideService;
 import com.CloudBike.service.impl.RideServiceImpl;
-import com.CloudBike.vo.RideDetailVO;
-import com.CloudBike.vo.RideOverviewVO;
-import com.CloudBike.vo.RideRecordOverviewVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -32,14 +30,14 @@ public class RideController {
 
     /**
      * 申请骑行团
-     * @param ride
+     * @param rideInfoDTO
      * @return
      */
     @PostMapping
-    public Result insert(@RequestBody Ride ride)
+    public Result insert(@RequestBody RideInfoDTO rideInfoDTO)
     {
-        log.info("申请骑行团：{}",ride);
-        rideService.insert(ride);
+        log.info("申请骑行团：{}",rideInfoDTO);
+        rideService.insert(rideInfoDTO);
         return Result.success();
     }
 
@@ -49,10 +47,10 @@ public class RideController {
      * @return
      */
     @GetMapping("/list")
-    public Result<List<RideOverviewVO>> list(String name)
+    public Result<List<RideInfoDTO>> list(String name)
     {
         log.info("查询最近的骑行团：{}",name);
-        List<RideOverviewVO> rideOverviewVOS= rideService.list(name);
+        List<RideInfoDTO> rideOverviewVOS= rideService.list(name);
         return Result.success(rideOverviewVOS);
     }
 
@@ -62,11 +60,11 @@ public class RideController {
      * @return
      */
     @GetMapping
-    public Result<RideDetailVO> one(Integer id)
+    public Result<RideInfoDTO> one(Integer id)
     {
         log.info("根据id查询骑行团详情：{}",id);
-        RideDetailVO rideDetailVO=rideService.one(id);
-        return Result.success(rideDetailVO);
+        RideInfoDTO rideInfoDTO=rideService.one(id);
+        return Result.success(rideInfoDTO);
     }
 
     /**
@@ -88,10 +86,10 @@ public class RideController {
      * @return
      */
     @GetMapping("/history")
-    public Result<List<RideRecordOverviewVO>> history(Integer status)
+    public Result<List<RideInfoDTO>> history(Integer status)
     {
         log.info("查询我的骑行活动：{}",status);
-        List<RideRecordOverviewVO> list=rideService.history(status);
+        List<RideInfoDTO> list=rideService.history(status);
         return Result.success(list);
     }
 

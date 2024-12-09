@@ -1,12 +1,9 @@
 package com.CloudBike.service;
 
+import com.CloudBike.dto.RideInfoDTO;
 import com.CloudBike.dto.RideInfoPageQuery;
 import com.CloudBike.entity.Ride;
 import com.CloudBike.result.PageResult;
-import com.CloudBike.vo.RideCheckDetailVO;
-import com.CloudBike.vo.RideDetailVO;
-import com.CloudBike.vo.RideOverviewVO;
-import com.CloudBike.vo.RideRecordOverviewVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -23,9 +20,9 @@ public interface IRideService extends IService<Ride> {
     /**
      * 申请骑行团
      *
-     * @param ride
+     * @param rideInfoDTO
      */
-    void insert(Ride ride);
+    void insert(RideInfoDTO rideInfoDTO);
 
     /**
      * 查询最近的骑行团
@@ -33,7 +30,7 @@ public interface IRideService extends IService<Ride> {
      * @param name
      * @return
      */
-    List<RideOverviewVO> list(String name);
+    List<RideInfoDTO> list(String name);
 
     /**
      * 根据id查询骑行团详情
@@ -41,7 +38,7 @@ public interface IRideService extends IService<Ride> {
      * @param id
      * @return
      */
-    RideDetailVO one(Integer id);
+    RideInfoDTO one(Integer id);
 
     /**
      * 加入骑行团
@@ -64,7 +61,7 @@ public interface IRideService extends IService<Ride> {
      * @param id
      * @return
      */
-    RideCheckDetailVO getone(Integer id);
+    RideInfoDTO getone(Integer id);
 
     /**
      * 审核骑行团信息
@@ -80,5 +77,5 @@ public interface IRideService extends IService<Ride> {
      * @param status
      * @return
      */
-    List<RideRecordOverviewVO> history(Integer status);
+    List<RideInfoDTO> history(Integer status);
 }

@@ -1,11 +1,11 @@
 package com.CloudBike.controller.admin;
 
 
+import com.CloudBike.dto.RideInfoDTO;
 import com.CloudBike.dto.RideInfoPageQuery;
 import com.CloudBike.result.PageResult;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.IRideService;
-import com.CloudBike.vo.RideCheckDetailVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -42,16 +42,15 @@ public class RideController {
 
     /**
      * 根据id查看骑行团信息详情
-     *
      * @param id
      * @return
      */
     @GetMapping
-    public Result<RideCheckDetailVO> one(Integer id)
+    public Result<RideInfoDTO> one(Integer id)
     {
         log.info("查看骑行团信息详情：{}", id);
-        RideCheckDetailVO rideCheckDetailVO = rideService.getone(id);
-        return Result.success(rideCheckDetailVO);
+        RideInfoDTO rideInfoDTO= rideService.getone(id);
+        return Result.success(rideInfoDTO);
     }
 
     /**
