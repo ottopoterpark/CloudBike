@@ -7,6 +7,7 @@ import com.CloudBike.service.IBikeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -40,5 +41,18 @@ public class BikeController {
         log.info("单车分类查询：{}",type);
         List<BikeInfoDTO> bikeInfoDTOS=bikeService.category(type);
         return Result.success(bikeInfoDTOS);
+    }
+
+    /**
+     * 根据id查询单车详情
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result<BikeInfoDTO> one(@PathVariable Integer id)
+    {
+        log.info("根据id查询单车详情：{}",id);
+        BikeInfoDTO bikeInfoDTO=bikeService.get(id);
+        return Result.success(bikeInfoDTO);
     }
 }

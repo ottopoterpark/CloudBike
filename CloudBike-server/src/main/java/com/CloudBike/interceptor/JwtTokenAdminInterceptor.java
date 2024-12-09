@@ -1,9 +1,12 @@
 package com.CloudBike.interceptor;
 
 import com.CloudBike.constant.JwtClaimsConstant;
+import com.CloudBike.constant.MessageConstant;
 import com.CloudBike.context.BaseContext;
 import com.CloudBike.properties.JwtProperties;
+import com.CloudBike.result.Result;
 import com.CloudBike.utils.JwtUtil;
+import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import java.io.PrintWriter;
 
 @Component
 @Slf4j
@@ -51,8 +56,13 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             return true;
         } catch (Exception ex)
         {
-            // 4、不通过，响应401状态码
-            response.setStatus(401);
+            // 4、不通过，返回自定义数据
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            PrintWriter out = response.getWriter();
+            String jsonString = JSONObject.toJSONString(Result.error(MessageConstant.NOT_LOGIN));
+            out.write(jsonString);
+            out.flush();
             return false;
         }
     }
