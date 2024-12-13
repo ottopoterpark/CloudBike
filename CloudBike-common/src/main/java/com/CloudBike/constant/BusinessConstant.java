@@ -1,7 +1,7 @@
 package com.CloudBike.constant;
 
 /**
- * 业务常量类1
+ * 业务常量类
  */
 public class BusinessConstant {
     /**
