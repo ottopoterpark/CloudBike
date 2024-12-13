@@ -3,12 +3,12 @@ package com.CloudBike.controller.user;
 import com.CloudBike.entity.Cart;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.ICartService;
+import com.CloudBike.vo.CartInfoVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -39,4 +39,15 @@ public class CartController {
         return Result.success();
     }
 
+    /**
+     * 查询我的购物车
+     * @return
+     */
+    @GetMapping("/list")
+    public Result<List<CartInfoVO>> list()
+    {
+        log.info("查询我的购物车");
+        List<CartInfoVO> list=cartService.listAll();
+        return Result.success(list);
+    }
 }

@@ -1,7 +1,10 @@
 package com.CloudBike.service;
 
 import com.CloudBike.entity.Cart;
+import com.CloudBike.vo.CartInfoVO;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -18,4 +21,10 @@ public interface ICartService extends IService<Cart> {
      * @param cart
      */
     void insert(Cart cart);
+
+    /**
+     * 查询我的购物车
+     * @return
+     */
+    List<CartInfoVO> listAll();
 }

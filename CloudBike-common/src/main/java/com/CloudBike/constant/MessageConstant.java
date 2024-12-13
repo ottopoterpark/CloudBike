@@ -38,4 +38,5 @@ public class MessageConstant {
      * 空结果提示信息
      */
     public static final String EMPTY_RESULT = "无符合条件的结果";
+    public static final String EMPTY_CART = "购物车为空或购物车中的单车已不可用";
 }
