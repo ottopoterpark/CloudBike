@@ -27,4 +27,17 @@ public interface ICartService extends IService<Cart> {
      * @return
      */
     List<CartInfoVO> listAll();
+
+    /**
+     * 修改购物车数量
+     * @param type
+     * @param id
+     */
+    void updateCount(Integer type, Integer id);
+
+    /**
+     * 根据购物车id批量删除购物车
+     * @param ids
+     */
+    void removeBatch(List<Integer> ids);
 }

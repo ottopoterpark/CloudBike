@@ -21,6 +21,7 @@ public class MessageConstant {
     public static final String AUTHORITY_TOO_HIGN = "无法对管理员进行操作";
     public static final String CREDIT_LIMIT = "当前信用状态冻结，无法执行操作";
     public static final String DISCOUNT_ILLEGAL = "非法套餐";
+    public static final String CART_ILLEGAL = "非法购物车";
 
     /**
      * 操作有误提示信息

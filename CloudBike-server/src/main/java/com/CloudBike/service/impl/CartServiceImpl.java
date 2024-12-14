@@ -3,6 +3,7 @@ package com.CloudBike.service.impl;
 import com.CloudBike.constant.BusinessConstant;
 import com.CloudBike.constant.MessageConstant;
 import com.CloudBike.constant.StatusConstant;
+import com.CloudBike.constant.TypeConstant;
 import com.CloudBike.context.BaseContext;
 import com.CloudBike.entity.Bike;
 import com.CloudBike.entity.Cart;
@@ -92,6 +93,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
      * @return
      */
     @Override
+    @Transactional
     public List<CartInfoVO> listAll()
     {
         // 1、获取用户信息
@@ -118,12 +120,18 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                 .list();
 
         // 3.3、筛选其中单车状态仍为正常的单车
+        List<Integer> busyBikeIds = bikes.stream()
+                .filter(l -> l.getStatus() != StatusConstant.AVAILABLE)
+                .toList()
+                .stream()
+                .map(Bike::getId)
+                .toList();
         bikes = bikes.stream()
                 .filter(l -> l.getStatus() == StatusConstant.AVAILABLE)
                 .toList();
 
         // 3.4、如果筛选结果为空，返回提示信息
-        if (bikes == null || bikes.isEmpty())
+        if (bikes.isEmpty())
             throw new BaseException(MessageConstant.EMPTY_CART);
 
         // 3.5、筛选可用购物车
@@ -138,6 +146,16 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                 .filter(l -> finalBikeIds.contains(l.getBikeId()))
                 .toList();
 
+        // 3.6、删除数据库中的不可用购物车
+        List<Integer> busyCartIds = lambdaQuery()
+                .eq(Cart::getUserId, userId)
+                .eq(Cart::getBikeId, busyBikeIds)
+                .list()
+                .stream()
+                .map(Cart::getId)
+                .toList();
+        removeBatchByIds(busyCartIds);
+
         // 4、补充属性
         List<CartInfoVO> cartInfoVOS = new ArrayList<>();
 
@@ -147,7 +165,8 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
         // 4.2、封装VOS结果
         carts.stream()
-                .forEach(l->{
+                .forEach(l ->
+                {
 
                     // 4.2.1、属性拷贝
                     CartInfoVO cartInfoVO = new CartInfoVO();
@@ -160,9 +179,9 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
                     // 4.2.3、将图片路径字符串转换为集合
                     String image = bike.getImage();
-                    List<String> images=new ArrayList<>();
-                    if (image!=null&&!image.isEmpty())
-                        images= Arrays.asList(image.split(","));
+                    List<String> images = new ArrayList<>();
+                    if (image != null && !image.isEmpty())
+                        images = Arrays.asList(image.split(","));
 
                     // 4.2.4、属性补充（图片路径集合）
                     cartInfoVO.setImages(images);
@@ -173,5 +192,75 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
         // 5、返回结果
         return cartInfoVOS;
+    }
+
+    /**
+     * 修改购物车数量
+     *
+     * @param type
+     * @param id
+     */
+    @Override
+    @Transactional
+    public void updateCount(Integer type, Integer id)
+    {
+        // 1、判断当前购物车是否可用
+        Cart cart = getById(id);
+        Integer bikeId = cart.getBikeId();
+
+        // 1.1、如果不可用，删除购物车，并返回提示信息
+        Bike bike = Db.getById(bikeId, Bike.class);
+        Integer status = bike.getStatus();
+        if (status != StatusConstant.AVAILABLE)
+            throw new BaseException(MessageConstant.BIKE_TOO_HOT);
+
+        // 2、修改业务叠加数量
+        Integer count = cart.getCount();
+
+        // 2.1、如果为数量减少业务
+        if (type == TypeConstant.MINUS)
+        {
+            // 2.1.1、如果数量为1，删除该购物车
+            if (count == 1)
+            {
+                removeById(id);
+                return;
+            }
+
+            // 2.1.2、如果数量不为1，数量-1
+            count -= 1;
+        }
+
+        // 2.2、如果为数量增加业务
+        if (type == TypeConstant.PLUS)
+            count += 1;
+
+        // 3、重新计算共计
+        Integer payment = cart.getPayment();
+        Integer cartType = cart.getType();
+        if (cartType == BusinessConstant.DAILY)
+            payment = bike.getDaily() * count;
+        if (cartType == BusinessConstant.MONTHLY)
+            payment = bike.getMonthly() * count;
+
+        // 4、更新购物车
+        lambdaUpdate()
+                .eq(Cart::getId, id)
+                .set(Cart::getCount, count)
+                .set(Cart::getPayment, payment)
+                .update();
+    }
+
+    /**
+     * 根据购物车id批量删除购物车
+     *
+     * @param ids
+     */
+    @Override
+    @Transactional
+    public void removeBatch(List<Integer> ids)
+    {
+        // 根据ids删除购物车
+        removeBatchByIds(ids);
     }
 }

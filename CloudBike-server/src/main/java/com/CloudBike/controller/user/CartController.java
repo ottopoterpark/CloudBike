@@ -4,6 +4,7 @@ import com.CloudBike.entity.Cart;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.ICartService;
 import com.CloudBike.vo.CartInfoVO;
+import com.alibaba.fastjson.util.RyuDouble;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -28,26 +29,56 @@ public class CartController {
 
     /**
      * 添加购物车
+     *
      * @param cart
      * @return
      */
     @PostMapping
     public Result save(@RequestBody Cart cart)
     {
-        log.info("添加购物车：{}",cart);
+        log.info("添加购物车：{}", cart);
         cartService.insert(cart);
         return Result.success();
     }
 
     /**
      * 查询我的购物车
+     *
      * @return
      */
     @GetMapping("/list")
     public Result<List<CartInfoVO>> list()
     {
         log.info("查询我的购物车");
-        List<CartInfoVO> list=cartService.listAll();
+        List<CartInfoVO> list = cartService.listAll();
         return Result.success(list);
+    }
+
+    /**
+     * 修改购物车数量
+     *
+     * @param type
+     * @param id
+     * @return
+     */
+    @PutMapping("/{id}")
+    public Result update(Integer type, @PathVariable Integer id)
+    {
+        log.info("修改购物车数量：{}  {}", type, id);
+        cartService.updateCount(type, id);
+        return Result.success();
+    }
+
+    /**
+     * 根据购物车id批量删除购物车
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public Result remove(@RequestParam List<Integer> ids)
+    {
+        log.info("根据购物车id批量删除购物车：{}",ids);
+        cartService.removeBatch(ids);
+        return Result.success();
     }
 }
