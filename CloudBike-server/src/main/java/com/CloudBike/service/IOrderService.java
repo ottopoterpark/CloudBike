@@ -1,7 +1,10 @@
 package com.CloudBike.service;
 
 import com.CloudBike.entity.Order;
+import com.CloudBike.vo.OrderOverviewVO;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,17 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IOrderService extends IService<Order> {
 
+    /**
+     * 查看我的订单
+     * @param category
+     * @return
+     */
+    List<OrderOverviewVO> list(Integer category);
+
+    /**
+     * 根据订单id查看你订单
+     * @param id
+     * @return
+     */
+    OrderOverviewVO one(Integer id);
 }

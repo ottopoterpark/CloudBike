@@ -1,12 +1,12 @@
 package com.CloudBike.constant;
 
 /**
- * 单车常量类
+ * 查询常量类
  */
 public class TypeConstant {
 
     /**
-     * 查询类型：特惠
+     * 单车查询类型：特惠
      */
     public static final Integer DISCOUNT =6;
     /**
@@ -26,4 +26,9 @@ public class TypeConstant {
      * 购物车叠加业务数量+1
      */
     public static final Integer PLUS = 1;
+
+    /**
+     * 订单查询类型：全部
+     */
+    public static final Integer ALL = 6;
 }

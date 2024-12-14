@@ -7,20 +7,20 @@ import com.CloudBike.constant.TypeConstant;
 import com.CloudBike.context.BaseContext;
 import com.CloudBike.entity.Bike;
 import com.CloudBike.entity.Cart;
+import com.CloudBike.entity.Order;
 import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.CartMapper;
 import com.CloudBike.service.ICartService;
 import com.CloudBike.vo.CartInfoVO;
+import com.CloudBike.vo.OrderSubmitVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,7 +32,9 @@ import java.util.stream.Collectors;
  * @since 2024-12-13
  */
 @Service
+@RequiredArgsConstructor
 public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements ICartService {
+
 
     /**
      * 添加购物车
@@ -262,5 +264,51 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     {
         // 根据ids删除购物车
         removeBatchByIds(ids);
+    }
+
+    /**
+     * 提交订单
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public OrderSubmitVO submit(Integer id)
+    {
+        // 1、获取当前用户信息
+        Integer userId = BaseContext.getCurrentId();
+
+        // 2、获取购物车信息
+        Cart cart = getById(id);
+
+        // 3、获取单车
+        Integer bikeId = cart.getBikeId();
+        Bike bike = Db.getById(bikeId, Bike.class);
+
+        // 4、判断单车状态
+        // 4.1、如果单车不为空闲状态，则删除购物车，并返回提示信息
+        Integer status = bike.getStatus();
+        if (status!=StatusConstant.AVAILABLE)
+        {
+            removeById(id);
+            throw new BaseException(MessageConstant.BIKE_TOO_HOT);
+        }
+
+        // 5、保存订单
+        // 5.1、封装结果
+        Order order=new Order();
+        order.setNumber(UUID.randomUUID().toString().replace("-","").substring(0,10))
+                .setType(cart.getType())
+                .setCount(cart.getCount())
+                .setPayment(cart.getPayment())
+                .setBikeId(bikeId)
+                .setUserId(userId);
+        Db.save(order);
+
+        // 6、返回订单id
+        OrderSubmitVO orderSubmitVO=new OrderSubmitVO();
+        orderSubmitVO.setId(order.getId());
+        return orderSubmitVO;
     }
 }

@@ -43,6 +43,10 @@ public class StatusConstant {
     public static final Integer FINISHED = 2;
 
     /**
+     * 订单状态：未付款
+     */
+    public static final Integer UNPAID = 0;
+    /**
      * 单车或订单状态：租赁中
      */
     public static final Integer RENTING = 2;
@@ -50,6 +54,10 @@ public class StatusConstant {
      * 单车或订单状态：待归还
      */
     public static final Integer TO_RETURN = 4;
+    /**
+     * 订单状态：已取消
+     */
+    public static final Integer CANCEL = 5;
 
     /**
      * 单车状态：空闲

@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -67,7 +66,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             openid = "3";
 
         // 判断openid是否为空，如果为空表示登陆失败，抛出业务异常
-        if (openid == null)
+        if (openid == null || openid.isEmpty())
             throw new BaseException(MessageConstant.LOGIN_FAILED);
 
         // 判断当前微信用户是不是新用户

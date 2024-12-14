@@ -4,6 +4,7 @@ import com.CloudBike.entity.Cart;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.ICartService;
 import com.CloudBike.vo.CartInfoVO;
+import com.CloudBike.vo.OrderSubmitVO;
 import com.alibaba.fastjson.util.RyuDouble;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -80,5 +81,18 @@ public class CartController {
         log.info("根据购物车id批量删除购物车：{}",ids);
         cartService.removeBatch(ids);
         return Result.success();
+    }
+
+    /**
+     * 提交订单
+     * @param id
+     * @return
+     */
+    @PostMapping("/submit")
+    public Result<OrderSubmitVO> submit(Integer id)
+    {
+        log.info("提交订单：{}",id);
+        OrderSubmitVO orderSubmitVO= cartService.submit(id);
+        return Result.success(orderSubmitVO);
     }
 }

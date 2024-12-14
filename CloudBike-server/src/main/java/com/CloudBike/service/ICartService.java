@@ -2,6 +2,7 @@ package com.CloudBike.service;
 
 import com.CloudBike.entity.Cart;
 import com.CloudBike.vo.CartInfoVO;
+import com.CloudBike.vo.OrderSubmitVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -40,4 +41,11 @@ public interface ICartService extends IService<Cart> {
      * @param ids
      */
     void removeBatch(List<Integer> ids);
+
+    /**
+     * 提交订单
+     * @param id
+     * @return
+     */
+    OrderSubmitVO submit(Integer id);
 }
