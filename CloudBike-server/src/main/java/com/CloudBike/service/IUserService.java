@@ -3,6 +3,7 @@ package com.CloudBike.service;
 import com.CloudBike.dto.UserInfoDTO;
 import com.CloudBike.dto.UserLoginDTO;
 import com.CloudBike.entity.User;
+import com.CloudBike.vo.BalanceVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -38,4 +39,10 @@ public interface IUserService extends IService<User> {
      * @param userInfoDTO
      */
     void update(UserInfoDTO userInfoDTO);
+
+    /**
+     * 查询个人余额
+     * @return
+     */
+    BalanceVO balance();
 }

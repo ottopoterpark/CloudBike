@@ -11,6 +11,7 @@ import com.CloudBike.mapper.UserMapper;
 import com.CloudBike.properties.WeChatProperties;
 import com.CloudBike.service.IUserService;
 import com.CloudBike.utils.HttpClientUtil;
+import com.CloudBike.vo.BalanceVO;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -177,5 +178,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 .set(username != null && !username.isEmpty(), User::getUsername, username)
                 .set(phone != null && !phone.isEmpty(), User::getPhone, phone)
                 .update();
+    }
+
+    /**
+     * 查询个人余额
+     * @return
+     */
+    @Override
+    public BalanceVO balance()
+    {
+        // 获取用户信息
+        Integer userId = BaseContext.getCurrentId();
+        User user = getById(userId);
+
+        // 封装结果
+        BalanceVO balanceVO=new BalanceVO();
+        balanceVO.setBalance(user.getBalance());
+
+        // 返回结果
+        return balanceVO;
     }
 }

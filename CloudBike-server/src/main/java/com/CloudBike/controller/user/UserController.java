@@ -8,6 +8,7 @@ import com.CloudBike.properties.JwtProperties;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.IUserService;
 import com.CloudBike.utils.JwtUtil;
+import com.CloudBike.vo.BalanceVO;
 import com.CloudBike.vo.UserLoginVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -98,6 +99,18 @@ public class UserController {
         log.info("修改个人信息：{}",userInfoDTO);
         userService.update(userInfoDTO);
         return Result.success();
+    }
+
+    /**
+     * 查询个人余额
+     * @return
+     */
+    @GetMapping("/balance")
+    public Result<BalanceVO> balance()
+    {
+        log.info("查询个人余额");
+        BalanceVO balanceVO=userService.balance();
+        return Result.success(balanceVO);
     }
 
 }

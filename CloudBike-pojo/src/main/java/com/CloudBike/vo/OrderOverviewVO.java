@@ -3,6 +3,7 @@ package com.CloudBike.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * 客户端订单VO
  */
 @Data
-public class OrderOverviewVO {
+public class OrderOverviewVO implements Serializable {
 
     /**
      * 订单id
