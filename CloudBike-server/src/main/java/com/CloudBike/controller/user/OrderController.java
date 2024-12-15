@@ -6,11 +6,7 @@ import com.CloudBike.service.IOrderService;
 import com.CloudBike.vo.OrderOverviewVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -66,6 +62,32 @@ public class OrderController {
     {
         log.info("订单支付：{}",id);
         orderService.pay(id);
+        return Result.success();
+    }
+
+    /**
+     * 根据订单ids批量删除订单
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public Result remove(@RequestParam List<Integer> ids)
+    {
+        log.info("根据订单ids批量删除订单：{}",ids);
+        orderService.removeBatch(ids);
+        return Result.success();
+    }
+
+    /**
+     * 取消订单
+     * @param id
+     * @return
+     */
+    @PutMapping("/cancel")
+    public Result cancel(Integer id)
+    {
+        log.info("取消订单：{}",id);
+        orderService.cancel(id);
         return Result.success();
     }
 }

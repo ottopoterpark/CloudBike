@@ -35,4 +35,16 @@ public interface IOrderService extends IService<Order> {
      * @param id
      */
     void pay(Integer id);
+
+    /**
+     * 根据订单ids批量删除订单
+     * @param ids
+     */
+    void removeBatch(List<Integer> ids);
+
+    /**
+     * 取消订单
+     * @param id
+     */
+    void cancel(Integer id);
 }

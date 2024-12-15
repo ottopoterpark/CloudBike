@@ -271,11 +271,10 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         Bike bike = Db.getById(bikeId, Bike.class);
 
         // 4、判断单车状态
-        // 4.1、如果单车不为空闲状态，则删除购物车，并返回提示信息
+        // 4.1、如果单车不为空闲状态，则返回提示信息
         Integer status = bike.getStatus();
         if (!Objects.equals(status, StatusConstant.AVAILABLE))
         {
-            removeById(id);
             throw new BaseException(MessageConstant.BIKE_TOO_HOT);
         }
 

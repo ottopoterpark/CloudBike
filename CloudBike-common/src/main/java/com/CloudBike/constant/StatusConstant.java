@@ -1,11 +1,9 @@
 package com.CloudBike.constant;
 
-import java.util.zip.Inflater;
-
 /**
  * 状态常量类
  */
-public class StatusConstant {
+public class  StatusConstant {
 
     /**
      * 用户账号状态为正常状态
@@ -55,6 +53,10 @@ public class StatusConstant {
      * 单车或订单状态：租赁中
      */
     public static final Integer RENTING = 2;
+    /**
+     * 订单状态：已完成
+     */
+    public static final Integer COMPLETED = 3;
     /**
      * 单车或订单状态：待归还
      */
