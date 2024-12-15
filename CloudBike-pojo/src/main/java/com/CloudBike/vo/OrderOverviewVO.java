@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * 客户端订单VO
+ * @author unique
  */
 @Data
 public class OrderOverviewVO implements Serializable {

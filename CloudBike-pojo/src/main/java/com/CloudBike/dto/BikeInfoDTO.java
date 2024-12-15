@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * 单车基本信息DTO
+ * @author unique
  */
 @Data
 public class BikeInfoDTO implements Serializable {

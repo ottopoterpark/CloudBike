@@ -4,19 +4,24 @@ import com.CloudBike.constant.MessageConstant;
 import com.CloudBike.constant.StatusConstant;
 import com.CloudBike.constant.TypeConstant;
 import com.CloudBike.context.BaseContext;
+import com.CloudBike.dto.OrderInfoPageQuery;
 import com.CloudBike.entity.Bike;
 import com.CloudBike.entity.Order;
 import com.CloudBike.entity.User;
 import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.OrderMapper;
+import com.CloudBike.result.PageResult;
 import com.CloudBike.service.IOrderService;
+import com.CloudBike.vo.OrderCheckOverviewVO;
 import com.CloudBike.vo.OrderOverviewVO;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -250,6 +255,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * @param id
      */
     @Override
+    @Transactional
     public void cancel(Integer id)
     {
         // 1、获取当前订单信息
@@ -278,15 +284,136 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
             // 3.4、更新用户余额
             Db.lambdaUpdate(User.class)
-                    .eq(User::getId,user.getId())
-                    .set(User::getBalance,balance)
+                    .eq(User::getId, user.getId())
+                    .set(User::getBalance, balance)
                     .update();
         }
 
         // 4、更新订单信息（状态）
         lambdaUpdate()
-                .eq(Order::getId,id)
-                .set(Order::getStatus,StatusConstant.CANCEL)
+                .eq(Order::getId, id)
+                .set(Order::getStatus, StatusConstant.CANCEL)
                 .update();
+    }
+
+    /**
+     * 订单分页查询
+     *
+     * @param pageQuery
+     * @return
+     */
+    @Override
+    public PageResult page(OrderInfoPageQuery pageQuery)
+    {
+        // 1、获取查询参数
+        Integer page = pageQuery.getPage();
+        Integer pageSize = pageQuery.getPageSize();
+        Integer category = pageQuery.getCategory();
+        String number = pageQuery.getNumber();
+        String username = pageQuery.getUsername();
+        LocalDate beginDate = pageQuery.getBeginDate();
+        LocalDate endDate = pageQuery.getEndDate();
+
+        // 2、分页查询
+        Page<Order> p = Page.of(page, pageSize);
+        lambdaQuery()
+                // 2.1、根据订单编号模糊匹配（如有）
+                .like(number != null && !number.isEmpty(), Order::getNumber, number)
+                // 2.2、根据下单时间区间筛选（如有）
+                .ge(beginDate != null, Order::getCreateTime, beginDate==null?null:beginDate.atStartOfDay())
+                .lt(endDate != null, Order::getCreateTime, endDate==null?null:endDate.plusDays(1).atStartOfDay())
+                .page(p);
+
+        // 2.3、如果无符合条件的结果，返回提示信息
+        List<Order> orders = p.getRecords();
+        if (orders == null || orders.isEmpty())
+        {
+            throw new BaseException(MessageConstant.EMPTY_RESULT);
+        }
+
+        // 3、根据业务类型筛选
+        if (!Objects.equals(category, TypeConstant.ALL))
+        {
+            orders = orders.stream()
+                    .filter(l -> Objects.equals(l.getStatus(), category))
+                    .toList();
+        }
+
+        // 3.1、如果无符合条件的结果，返回提示信息
+        if (orders.isEmpty())
+        {
+            throw new BaseException(MessageConstant.EMPTY_RESULT);
+        }
+
+        // 4、获取关联的用户信息
+        // 4.1、获取关联用户id
+        List<Integer> userIds = orders.stream()
+                .map(Order::getUserId)
+                .toList();
+
+        // 4.2、将用户id与用户名组成Map
+        Map<Integer, String> usernameMap = Db.lambdaQuery(User.class)
+                .in(User::getId, userIds)
+                .list().stream()
+                .collect(Collectors.toMap(User::getId, User::getUsername));
+
+        // 5、根据用户名筛选（如有）
+        if (username != null && !username.isEmpty())
+        {
+            // 5.1、遍历筛选用户名模糊匹配的结果
+            Set<Integer> ids = usernameMap.keySet();
+            userIds = ids.stream()
+                    .filter(l -> usernameMap.get(l).contains(username))
+                    .toList();
+
+            // 5.2、根据筛选结果筛选订单
+            List<Integer> finalUserIds = userIds;
+            orders = orders.stream()
+                    .filter(l -> !finalUserIds.contains(l.getUserId()))
+                    .toList();
+
+            // 5.3、如果筛选结果为空
+            if (orders.isEmpty())
+            {
+                throw new BaseException(MessageConstant.EMPTY_RESULT);
+            }
+        }
+
+        // 6、获取订单关联的单车信息
+        // 6.1、获取订单关联单车id
+        List<Integer> bikeIds = orders.stream()
+                .map(Order::getBikeId)
+                .toList();
+
+        // 6.2、将单车id与单车编号组成Map
+        Map<Integer, String> numberMap = Db.lambdaQuery(Bike.class)
+                .in(Bike::getId, bikeIds)
+                .list()
+                .stream()
+                .collect(Collectors.toMap(Bike::getId, Bike::getNumber));
+
+        // 7、封装结果
+        List<OrderCheckOverviewVO> orderCheckOverviewVOS=new ArrayList<>();
+        orders.stream()
+                .forEach(l->{
+                    // 7.1、订单信息属性拷贝
+                    OrderCheckOverviewVO orderCheckOverviewVO=new OrderCheckOverviewVO();
+                    BeanUtils.copyProperties(l, orderCheckOverviewVO);
+
+                    // 7.2、用户名属性补充
+                    orderCheckOverviewVO.setUsername(usernameMap.get(l.getUserId()));
+
+                    // 7.3、单车编号熟悉补充
+                    orderCheckOverviewVO.setBikeNumber(numberMap.get(l.getBikeId()));
+
+                    // 7.4、将VO存入VOS
+                    orderCheckOverviewVOS.add(orderCheckOverviewVO);
+                });
+
+        // 8、返回结果
+        return PageResult.builder()
+                .total((long)orderCheckOverviewVOS.size())
+                .records(orderCheckOverviewVOS)
+                .build();
     }
 }

@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 /**
  * 余额VO
+ * @author unique
  */
 @Data
 public class BalanceVO implements Serializable {

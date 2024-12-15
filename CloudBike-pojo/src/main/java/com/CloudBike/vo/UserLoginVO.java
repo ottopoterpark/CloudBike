@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 /**
  * 微信用户登录VO
+ * @author unique
  */
 @Builder
 @Data

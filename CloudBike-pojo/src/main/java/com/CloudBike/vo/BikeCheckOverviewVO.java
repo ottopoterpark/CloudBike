@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 /**
  * 后台单车管理VO
+ * @author unique
  */
 @Data
 public class BikeCheckOverviewVO implements Serializable {

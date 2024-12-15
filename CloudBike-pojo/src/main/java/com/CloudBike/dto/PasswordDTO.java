@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 /**
  * 重置密码DTO
+ * @author unique
  */
 @Data
 public class PasswordDTO implements Serializable {

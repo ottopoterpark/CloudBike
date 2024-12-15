@@ -12,8 +12,6 @@ import com.CloudBike.entity.Order;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.IllegalFormatCodePointException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -60,10 +58,10 @@ public class OrderTask {
     }
 
     /**
-     * 定时处理超过两天未提车的订单（每分钟一次）
+     * 定时处理超过两天未提车的订单（每十分钟一次）
      */
     @Transactional
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
     public void checkPick()
     {
         log.info("定时处理超过两天未提车的订单");

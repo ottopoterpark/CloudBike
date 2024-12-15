@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 /**
  * 微信用户登录DTO
+ * @author unique
  */
 @Data
 public class UserLoginDTO implements Serializable {

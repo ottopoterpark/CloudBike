@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * 购物车信息VO
+ * @author unique
  */
 @Data
 public class CartInfoVO implements Serializable {

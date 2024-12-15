@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 /**
  * 骑行团信息分页查询DTO
+ * @author unique
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

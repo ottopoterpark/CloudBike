@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 /**
  * 后台登陆VO
+ * @author unique
  */
 @Data
 @Builder

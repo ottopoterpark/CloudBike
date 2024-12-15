@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 /**
  * 创建订单VO
+ * @author unique
  */
 @Data
 public class OrderSubmitVO implements Serializable {

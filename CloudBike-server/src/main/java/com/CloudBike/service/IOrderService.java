@@ -1,6 +1,8 @@
 package com.CloudBike.service;
 
+import com.CloudBike.dto.OrderInfoPageQuery;
 import com.CloudBike.entity.Order;
+import com.CloudBike.result.PageResult;
 import com.CloudBike.vo.OrderOverviewVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -47,4 +49,11 @@ public interface IOrderService extends IService<Order> {
      * @param id
      */
     void cancel(Integer id);
+
+    /**
+     * 订单分页查询
+     * @param pageQuery
+     * @return
+     */
+    PageResult page(OrderInfoPageQuery pageQuery);
 }

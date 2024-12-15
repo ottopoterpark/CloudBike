@@ -1,12 +1,15 @@
 package com.CloudBike.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
 /**
  * 单车分页查询DTO
+ * @author unique
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class BikeInfoPageQuery extends PageQuery implements Serializable {
     /**

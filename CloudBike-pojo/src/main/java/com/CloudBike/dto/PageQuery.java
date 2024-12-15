@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 /**
  * 分页查询DTO
+ * @author unique
  */
 @Data
 public class PageQuery implements Serializable {

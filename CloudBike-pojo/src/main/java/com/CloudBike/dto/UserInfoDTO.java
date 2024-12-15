@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 /**
  * 用户个人信息DTO
+ * @author unique
  */
 @Data
 public class UserInfoDTO implements Serializable {

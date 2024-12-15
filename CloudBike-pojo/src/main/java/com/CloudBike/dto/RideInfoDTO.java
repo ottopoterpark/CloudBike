@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * 骑行团信息DTO
+ * @author unique
  */
 @Data
 public class RideInfoDTO implements Serializable {
