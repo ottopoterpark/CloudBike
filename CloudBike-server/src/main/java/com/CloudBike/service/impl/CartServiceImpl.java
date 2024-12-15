@@ -56,8 +56,9 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                 .eq(Cart::getBikeId, cart.getBikeId())
                 .list();
         if (carts != null && !carts.isEmpty())
+        {
             throw new BaseException(MessageConstant.BUSINESS_EXISTS);
-
+        }
         // 3、获取单车信息
         Integer bikeId = cart.getBikeId();
         Bike bike = Db.lambdaQuery(Bike.class)
@@ -68,22 +69,30 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         Integer payment = 0;
 
         // 3.1、租赁业务
-        if (cart.getType() == BusinessConstant.DAILY)
+        if (Objects.equals(cart.getType(), BusinessConstant.DAILY))
+        {
             payment = bike.getDaily() * cart.getCount();
-        if (cart.getType() == BusinessConstant.MONTHLY)
+        }
+        if (Objects.equals(cart.getType(), BusinessConstant.MONTHLY))
+        {
             payment = bike.getMonthly() * cart.getCount();
+        }
 
         // 3.2、购买业务
-        if (cart.getType() == BusinessConstant.PURCHASE)
+        if (Objects.equals(cart.getType(), BusinessConstant.PURCHASE))
+        {
             payment = bike.getPrice();
+        }
 
         // 4、属性补充
         cart.setPayment(payment);
 
         // 5、添加购物车
         // 5.1、如果此时单车已被租赁或购买，返回提示信息
-        if (bike.getStatus() != StatusConstant.AVAILABLE)
+        if (!Objects.equals(bike.getStatus(), StatusConstant.AVAILABLE))
+        {
             throw new BaseException(MessageConstant.BIKE_TOO_HOT);
+        }
 
         // 5.2、添加购物车
         save(cart);
@@ -108,55 +117,20 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
         // 2.1、如果购物车为空，返回提示信息
         if (carts == null || carts.isEmpty())
+        {
             throw new BaseException(MessageConstant.EMPTY_RESULT);
+        }
 
-        // 3、去除其中已经不可用的购物车
-        // 3.1、获取购物车中的单车id
+        // 3、获取购物车关联的单车
+        // 3.1、获取关联的单车id
         List<Integer> bikeIds = carts.stream()
                 .map(Cart::getBikeId)
                 .toList();
 
-        // 3.2、获取购物车中的单车
+        // 3.2、获取id获取单车集合
         List<Bike> bikes = Db.lambdaQuery(Bike.class)
                 .in(Bike::getId, bikeIds)
                 .list();
-
-        // 3.3、筛选其中单车状态仍为正常的单车
-        List<Integer> busyBikeIds = bikes.stream()
-                .filter(l -> l.getStatus() != StatusConstant.AVAILABLE)
-                .toList()
-                .stream()
-                .map(Bike::getId)
-                .toList();
-        bikes = bikes.stream()
-                .filter(l -> l.getStatus() == StatusConstant.AVAILABLE)
-                .toList();
-
-        // 3.4、如果筛选结果为空，返回提示信息
-        if (bikes.isEmpty())
-            throw new BaseException(MessageConstant.EMPTY_CART);
-
-        // 3.5、筛选可用购物车
-        // 3.5.1、更新可用单车id
-        bikeIds = bikes.stream()
-                .map(Bike::getId)
-                .toList();
-
-        // 3.5.2、根据单车id筛选可用购物车
-        List<Integer> finalBikeIds = bikeIds;
-        carts = carts.stream()
-                .filter(l -> finalBikeIds.contains(l.getBikeId()))
-                .toList();
-
-        // 3.6、删除数据库中的不可用购物车
-        List<Integer> busyCartIds = lambdaQuery()
-                .eq(Cart::getUserId, userId)
-                .eq(Cart::getBikeId, busyBikeIds)
-                .list()
-                .stream()
-                .map(Cart::getId)
-                .toList();
-        removeBatchByIds(busyCartIds);
 
         // 4、补充属性
         List<CartInfoVO> cartInfoVOS = new ArrayList<>();
@@ -183,7 +157,9 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                     String image = bike.getImage();
                     List<String> images = new ArrayList<>();
                     if (image != null && !image.isEmpty())
+                    {
                         images = Arrays.asList(image.split(","));
+                    }
 
                     // 4.2.4、属性补充（图片路径集合）
                     cartInfoVO.setImages(images);
@@ -213,14 +189,16 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         // 1.1、如果不可用，删除购物车，并返回提示信息
         Bike bike = Db.getById(bikeId, Bike.class);
         Integer status = bike.getStatus();
-        if (status != StatusConstant.AVAILABLE)
+        if (!Objects.equals(status, StatusConstant.AVAILABLE))
+        {
             throw new BaseException(MessageConstant.BIKE_TOO_HOT);
+        }
 
         // 2、修改业务叠加数量
         Integer count = cart.getCount();
 
         // 2.1、如果为数量减少业务
-        if (type == TypeConstant.MINUS)
+        if (Objects.equals(type, TypeConstant.MINUS))
         {
             // 2.1.1、如果数量为1，删除该购物车
             if (count == 1)
@@ -234,16 +212,22 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         }
 
         // 2.2、如果为数量增加业务
-        if (type == TypeConstant.PLUS)
+        if (Objects.equals(type, TypeConstant.PLUS))
+        {
             count += 1;
+        }
 
         // 3、重新计算共计
         Integer payment = cart.getPayment();
         Integer cartType = cart.getType();
-        if (cartType == BusinessConstant.DAILY)
+        if (Objects.equals(cartType, BusinessConstant.DAILY))
+        {
             payment = bike.getDaily() * count;
-        if (cartType == BusinessConstant.MONTHLY)
+        }
+        if (Objects.equals(cartType, BusinessConstant.MONTHLY))
+        {
             payment = bike.getMonthly() * count;
+        }
 
         // 4、更新购物车
         lambdaUpdate()
@@ -289,7 +273,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         // 4、判断单车状态
         // 4.1、如果单车不为空闲状态，则删除购物车，并返回提示信息
         Integer status = bike.getStatus();
-        if (status!=StatusConstant.AVAILABLE)
+        if (!Objects.equals(status, StatusConstant.AVAILABLE))
         {
             removeById(id);
             throw new BaseException(MessageConstant.BIKE_TOO_HOT);

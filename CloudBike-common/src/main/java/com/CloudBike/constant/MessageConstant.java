@@ -2,6 +2,8 @@ package com.CloudBike.constant;
 
 /**
  * 信息常量类
+ *
+ * @author Unique
  */
 public class MessageConstant {
 
@@ -21,7 +23,6 @@ public class MessageConstant {
     public static final String AUTHORITY_TOO_HIGN = "无法对管理员进行操作";
     public static final String CREDIT_LIMIT = "当前信用状态冻结，无法执行操作";
     public static final String DISCOUNT_ILLEGAL = "非法套餐";
-    public static final String CART_ILLEGAL = "非法购物车";
 
     /**
      * 操作有误提示信息
@@ -34,10 +35,10 @@ public class MessageConstant {
     public static final String TOO_HOT = "当前活动太火爆，人数已满！";
     public static final String BUSINESS_EXISTS = "当前购物车已有该单车业务";
     public static final String BIKE_TOO_HOT = "来晚了，单车已被抢";
+    public static final String TOO_POOR = "余额不足";
 
     /**
      * 空结果提示信息
      */
     public static final String EMPTY_RESULT = "无符合条件的结果";
-    public static final String EMPTY_CART = "购物车为空或购物车中的单车已不可用";
 }

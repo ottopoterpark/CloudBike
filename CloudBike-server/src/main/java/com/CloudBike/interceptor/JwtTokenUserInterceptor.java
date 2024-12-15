@@ -37,6 +37,7 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
      * @return
      * @throws Exception
      */
+    @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
     {
         // 判断当前拦截到的是Controller的方法还是其他资源

@@ -46,6 +46,11 @@ public class StatusConstant {
      * 订单状态：未付款
      */
     public static final Integer UNPAID = 0;
+
+    /**
+     * 单车或订单状态：待提车
+     */
+    public static final Integer UNPICKED = 1;
     /**
      * 单车或订单状态：租赁中
      */

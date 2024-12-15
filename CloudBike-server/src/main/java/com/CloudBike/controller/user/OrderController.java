@@ -7,6 +7,7 @@ import com.CloudBike.vo.OrderOverviewVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -53,5 +54,18 @@ public class OrderController {
         log.info("根据订单id查看订单：{}",id);
         OrderOverviewVO orderOverviewVO=orderService.one(id);
         return Result.success(orderOverviewVO);
+    }
+
+    /**
+     * 订单支付
+     * @param id
+     * @return
+     */
+    @PutMapping("/pay")
+    public Result pay(Integer id)
+    {
+        log.info("订单支付：{}",id);
+        orderService.pay(id);
+        return Result.success();
     }
 }

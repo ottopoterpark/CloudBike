@@ -43,7 +43,9 @@ public class OrderTask {
 
         // 无超时未支付订单
         if (orderIds.isEmpty())
+        {
             return;
+        }
 
         // 将这些订单状态改为已取消
         orderService.lambdaUpdate()

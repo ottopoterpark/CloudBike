@@ -29,4 +29,10 @@ public interface IOrderService extends IService<Order> {
      * @return
      */
     OrderOverviewVO one(Integer id);
+
+    /**
+     * 订单支付
+     * @param id
+     */
+    void pay(Integer id);
 }

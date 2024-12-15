@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>
@@ -38,6 +39,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
      * @param loginDTO
      * @return
      */
+    @Override
     public Employee login(LoginDTO loginDTO)
     {
 
@@ -51,7 +53,9 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         // 3、判断各种异常信息
         // 3.1、账号不存在
         if (employee == null)
+        {
             throw new BaseException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
 
         // 3.2 密码错误
         password = DigestUtils.md5DigestAsHex(password.getBytes());
@@ -61,7 +65,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         }
 
         // 3.3、账户被锁定
-        if (employee.getStatus() == StatusConstant.DISABLED)
+        if (Objects.equals(employee.getStatus(), StatusConstant.DISABLED))
         {
             throw new BaseException(MessageConstant.ACCOUNT_LOCKED);
         }
@@ -92,7 +96,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
         // 4、处理各种异常信息
         // 4.1 权限不足
-        if (authority == AuthorityConstant.COMMON)
+        if (Objects.equals(authority, AuthorityConstant.COMMON))
         {
             throw new BaseException(MessageConstant.AUTHORITY_TOO_LOW);
         }
@@ -102,13 +106,17 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         {
             List<Employee> list = lambdaQuery().eq(Employee::getUsername, username).list();
             if (list != null && !list.isEmpty())
+            {
                 throw new BaseException(MessageConstant.DUPLICATE_USERNAME);
+            }
         }
 
         // 5、向数据库插入员工信息
         // 5.1 对密码进行MD5加密
         if (password == null || password.isEmpty())
+        {
             password = DefaultConstant.DEFAULT_PASSWORD;
+        }
         password = DigestUtils.md5DigestAsHex(password.getBytes());
         employee.setPassword(password);
 
@@ -156,13 +164,13 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         Employee employee = getById(empId);
 
         // 2、如果是查看自己的信息，直接返回
-        if (empId == id)
+        if (Objects.equals(empId, id))
         {
             return getById(id);
         }
 
         // 3、如果当前后台人员为管理员，直接查询信息
-        if (employee.getAuthority() == AuthorityConstant.ADMINISTRATOR)
+        if (Objects.equals(employee.getAuthority(), AuthorityConstant.ADMINISTRATOR))
         {
             return getById(id);
         }
@@ -185,12 +193,16 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         Employee employee = getById(empId);
 
         // 2、如果为普通员工，无法删除
-        if (employee.getAuthority() == AuthorityConstant.COMMON)
+        if (Objects.equals(employee.getAuthority(), AuthorityConstant.COMMON))
+        {
             throw new BaseException(MessageConstant.AUTHORITY_TOO_LOW);
+        }
 
         // 3、ids不能含有管理员id（唯一）
         if (ids.contains(1))
+        {
             throw new BaseException(MessageConstant.AUTHORITY_TOO_HIGN);
+        }
 
         // 4、执行删除操作
         removeBatchByIds(ids);
@@ -212,12 +224,16 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         Integer authority = employee.getAuthority();
 
         // 2、普通员工无法执行该操作
-        if (authority == AuthorityConstant.COMMON)
+        if (Objects.equals(authority, AuthorityConstant.COMMON))
+        {
             throw new BaseException(MessageConstant.AUTHORITY_TOO_LOW);
+        }
 
         // 3、管理员无法修改自己的账号信息（保持可用）
         if (id == 1)
+        {
             throw new BaseException(MessageConstant.AUTHORITY_TOO_HIGN);
+        }
 
         // 4、执行操作
         lambdaUpdate()
@@ -241,12 +257,16 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         Integer authority = employee.getAuthority();
 
         // 2、如果为普通员工，拒绝操作
-        if (authority == AuthorityConstant.COMMON)
+        if (Objects.equals(authority, AuthorityConstant.COMMON))
+        {
             throw new BaseException(MessageConstant.AUTHORITY_TOO_LOW);
+        }
 
         // 3、判断操作对象是否为管理员（非法操作）
         if (id == 1)
+        {
             throw new BaseException(MessageConstant.AUTHORITY_TOO_HIGN);
+        }
 
         // 4、执行操作
         String password=DefaultConstant.DEFAULT_PASSWORD;
@@ -278,7 +298,9 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         // 4、对旧密码加密然后对比，如果不一致提示信息
         oldPassword=DigestUtils.md5DigestAsHex(oldPassword.getBytes());
         if (!oldPassword.equals(password))
+        {
             throw new BaseException(MessageConstant.OLDPASSWORD_ERROR);
+        }
 
         // 5、对新密码进行MD5加密然后存储
         newPassword=DigestUtils.md5DigestAsHex(newPassword.getBytes());

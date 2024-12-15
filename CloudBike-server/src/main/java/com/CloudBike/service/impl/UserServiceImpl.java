@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -54,21 +55,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public User login(UserLoginDTO userLoginDTO)
     {
         // 调用微信接口服务，获得当前微信用户的openid
-        Map<String, String> paramMap = new HashMap<>();                   // 封装请求参数
+        // 封装请求参数
+        Map<String, String> paramMap = new HashMap<>();
         paramMap.put("appid", weChatProperties.getAppid());
         paramMap.put("secret", weChatProperties.getSecret());
         paramMap.put("js_code", userLoginDTO.getCode());
         paramMap.put("grant_type", "authorization_code");
-        String json = HttpClientUtil.doGet(loginUrl, paramMap);         // 获得响应结果
-        JSONObject jsonObject = JSON.parseObject(json);                 // 解析响应结果
+        String json = HttpClientUtil.doGet(loginUrl, paramMap);
+        // 获得响应结果
+        JSONObject jsonObject = JSON.parseObject(json);
+        // 解析响应结果
         String openid = jsonObject.getString("openid");
         //        todo 后端开发跳过微信登陆
         if (openid == null || openid.isEmpty())
+        {
             openid = "3";
+        }
 
         // 判断openid是否为空，如果为空表示登陆失败，抛出业务异常
         if (openid == null || openid.isEmpty())
+        {
             throw new BaseException(MessageConstant.LOGIN_FAILED);
+        }
 
         // 判断当前微信用户是不是新用户
         User user = lambdaQuery()
@@ -168,8 +176,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         {
             Integer id = user.getId();
             // 2.3、如果用户id不为当前用户id，则返回提示信息
-            if (userId != id)
+            if (!Objects.equals(userId, id))
+            {
                 throw new BaseException(MessageConstant.DUPLICATE_USERNAME);
+            }
         }
 
         // 3、对用户信息进行修改

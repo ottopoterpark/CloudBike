@@ -59,8 +59,10 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
         // 2、检测用户的信用状态
         // 2.1、如果信用状态被冻结，无法发起活动
-        if (user.getCredit() == StatusConstant.DISABLED)
+        if (Objects.equals(user.getCredit(), StatusConstant.DISABLED))
+        {
             throw new BaseException(MessageConstant.CREDIT_LIMIT);
+        }
 
         // 3、检测用户在活动当天是否有其他骑行活动
         List<RideDetail> list = Db.lambdaQuery(RideDetail.class)
@@ -83,7 +85,9 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                     })
                     .collect(Collectors.toSet());
             if (departureTimes.contains(rideInfoDTO.getDepartureTime().toLocalDate()))
+            {
                 throw new BaseException(MessageConstant.BUSY_DAY);
+            }
         }
 
         // 4、如果用户信用状态正常且当天无其他骑行活动，允许申请
@@ -96,7 +100,9 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         List<String> images = rideInfoDTO.getImages();
         String image=null;
         if (images!=null&&!images.isEmpty())
-            image=String.join(",",images);
+        {
+            image = String.join(",", images);
+        }
         ride.setImage(image);
 
         // 4.3、存储骑行团信息
@@ -127,17 +133,24 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
     {
         // 1、根据条件筛选最近的骑行团活动
         List<Ride> list = lambdaQuery()
-                .like(name != null && !name.isEmpty(), Ride::getName, name)     // 1.1、骑行团名称匹配（如有）
-                .eq(Ride::getStatus, StatusConstant.PASSED)                                // 1.2、骑行团状态为”已通过“
-                .apply("participants < max_people")                              // 1.3、报名名额未满
-                .gt(Ride::getDepartureTime, LocalDateTime.now().plusHours(2))              // 1.4、出发时间距现在最少2小时
-                .orderByDesc(Ride::getParticipants)                                        // 1.5、首先根据已报名人数降序
-                .orderByAsc(Ride::getDepartureTime)                                        //      再根据出发时间升序排序
+                // 1.1、骑行团名称匹配（如有）
+                .like(name != null && !name.isEmpty(), Ride::getName, name)
+                // 1.2、骑行团状态为”已通过“
+                .eq(Ride::getStatus, StatusConstant.PASSED)
+                // 1.3、报名名额未满
+                .apply("participants < max_people")
+                // 1.4、出发时间距现在最少2小时
+                .gt(Ride::getDepartureTime, LocalDateTime.now().plusHours(2))
+                // 1.5、首先根据已报名人数降序再根据出发时间升序排序
+                .orderByDesc(Ride::getParticipants)
+                .orderByAsc(Ride::getDepartureTime)
                 .list();
 
         // 2、如果无符合条件的结果，返回提示信息
         if (list == null || list.isEmpty())
+        {
             throw new BaseException(MessageConstant.EMPTY_RESULT);
+        }
 
         // 3、将查询信息转化为对应DTOS
         List<RideInfoDTO> rideInfoDTOS = new ArrayList<>();
@@ -165,7 +178,9 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
             String image = l.getImage();
             List<String> images=new ArrayList<>();
             if (image!=null&&!image.isEmpty())
-                images=Arrays.asList(image.split(","));
+            {
+                images = Arrays.asList(image.split(","));
+            }
             rideInfoDTO.setImages(images);
 
             // 3.6、补充属性
@@ -210,7 +225,9 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         String image = ride.getImage();
         List<String> images=new ArrayList<>();
         if (image!=null&&!image.isEmpty())
-            images=Arrays.asList(image.split(","));
+        {
+            images = Arrays.asList(image.split(","));
+        }
         rideInfoDTO.setImages(images);
 
         // 返回结果
@@ -235,8 +252,10 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         // 2、获取当前用户的信用状态
         // 2.1、如果当前用户处于冻结状态，则无法加入骑行团
         Integer credit = user.getCredit();
-        if (credit == StatusConstant.DISABLED)
+        if (Objects.equals(credit, StatusConstant.DISABLED))
+        {
             throw new BaseException(MessageConstant.CREDIT_LIMIT);
+        }
 
         // 3、获取骑行团信息
         Ride ride = getById(id);
@@ -265,7 +284,9 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
             // 4.3、如果当天有其他骑行活动，不允许加入
             if (departureTimes.contains(ride.getDepartureTime().toLocalDate()))
+            {
                 throw new BaseException(MessageConstant.BUSY_DAY);
+            }
         }
 
         // 5、如果用户帐号状态正常且当天无其他骑行活动，则判断该活动是否还有名额
@@ -319,7 +340,9 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
         // 2.1、如果结果为空，则返回提示信息
         if (p.getTotal() == 0)
+        {
             throw new BaseException(MessageConstant.EMPTY_RESULT);
+        }
 
         // 3、对结果进行属性补充
         // 3.1、获取这些活动的发起者id
@@ -364,7 +387,9 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
             // 5.1、如果结果为空，返回提示信息
             if (list.isEmpty())
+            {
                 throw new BaseException(MessageConstant.EMPTY_RESULT);
+            }
 
             // 5.2、封装分页查询结果
             return PageResult.builder()
@@ -406,13 +431,17 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         // 3.2、属性补充
         rideInfoDTO.setUsername(user.getUsername());
         if (user.getPhone() != null && !user.getPhone().isEmpty())
+        {
             rideInfoDTO.setPhone(user.getPhone());
+        }
 
         // 3.3、将图片路径字符串转换为集合
         String image = ride.getImage();
         List<String> images=new ArrayList<>();
         if (image != null && !image.isEmpty())
-            images=Arrays.asList(image.split(","));
+        {
+            images = Arrays.asList(image.split(","));
+        }
         rideInfoDTO.setImages(images);
 
         // 4、返回结果
@@ -430,7 +459,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
     public void check(Integer id, String reason, Integer status)
     {
         // 1、如果审核状态为驳回，发起者发起骑行次数-1
-        if (status == StatusConstant.REJECTED)
+        if (Objects.equals(status, StatusConstant.REJECTED))
         {
             // 1.1、获取骑行信息
             Ride ride = getById(id);
@@ -480,7 +509,9 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
         // 2.2、如果结果为空，返回提示信息
         if (rideIds.isEmpty())
+        {
             throw new BaseException(MessageConstant.EMPTY_RESULT);
+        }
 
         // 2.3、根据活动id获取这些活动
         List<Ride> rides = lambdaQuery()
@@ -500,7 +531,9 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                     String image = l.getImage();
                     List<String> images=new ArrayList<>();
                     if (image != null && !image.isEmpty())
-                        images=Arrays.asList(image.split(","));
+                    {
+                        images = Arrays.asList(image.split(","));
+                    }
                     rideInfoDTO.setImages(images);
 
                     // 3.3、将DTO存入结果DTOS中
@@ -510,35 +543,40 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         // 4、判断查询类型
         List<RideInfoDTO> result = new ArrayList<>();
         // 4.1、如果查询类型为全部
-        if (status == StatusConstant.ALL)
+        if (Objects.equals(status, StatusConstant.ALL))
         {
             result = rideInfoDTOS.stream()
-                    .sorted(Comparator.comparing(RideInfoDTO::getDepartureTime))     // 按出发时间升序，展示最近
+                    // 按出发时间升序，展示最近
+                    .sorted(Comparator.comparing(RideInfoDTO::getDepartureTime))
                     .toList();
         }
 
         // 4.2、如果查询类型为未开始
-        if (status == StatusConstant.PREPARED)
+        if (Objects.equals(status, StatusConstant.PREPARED))
         {
             result = rideInfoDTOS.stream()
                     .filter(l -> l.getDepartureTime().isAfter(LocalDateTime.now()))
-                    .sorted(Comparator.comparing(RideInfoDTO::getDepartureTime))     // 按出发时间升序，展示最近
+                    // 按出发时间升序，展示最近
+                    .sorted(Comparator.comparing(RideInfoDTO::getDepartureTime))
                     .toList();
         }
 
         // 4.3、如果查询类型为已结束
-        if (status == StatusConstant.FINISHED)
+        if (Objects.equals(status, StatusConstant.FINISHED))
         {
             result = rideInfoDTOS.stream()
                     .filter(l -> l.getDepartureTime().isBefore(LocalDateTime.now()))
-                    .sorted(Comparator.comparing(RideInfoDTO::getDepartureTime))    // 按出发时间升序，展示最近
+                    // 按出发时间升序，展示最近
+                    .sorted(Comparator.comparing(RideInfoDTO::getDepartureTime))
                     .toList();
         }
 
         // 5、返回结果
         // 5.1、如果筛选后结果为空，返回提示消息
         if (result.isEmpty())
+        {
             throw new BaseException(MessageConstant.EMPTY_RESULT);
+        }
 
         // 5.2、返回结果
         return result;

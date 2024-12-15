@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -65,7 +62,9 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
         long total = p.getTotal();
         List<Bike> records = p.getRecords();
         if (records == null || records.isEmpty())
+        {
             throw new BaseException(MessageConstant.EMPTY_RESULT);
+        }
 
         // 3.2、封装属性
         List<BikeCheckOverviewVO> bikeCheckOverviewVOS = new ArrayList<>();
@@ -79,7 +78,7 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
         // 4、查询其中状态为租赁中和待归还的单车（如有）
         // 4.1、获取查询单车的id
         List<Integer> bikeIds = records.stream()
-                .filter(l -> l.getStatus() == StatusConstant.RENTING || l.getStatus() == StatusConstant.TO_RETURN)
+                .filter(l -> Objects.equals(l.getStatus(), StatusConstant.RENTING) || Objects.equals(l.getStatus(), StatusConstant.TO_RETURN))
                 .map(Bike::getId)
                 .toList();
 
@@ -96,16 +95,20 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
                     {
                         LocalDateTime returnTime = l.getPickTime();
                         Integer count = l.getCount();
-                        if (l.getType() == BusinessConstant.DAILY)
+                        if (Objects.equals(l.getType(), BusinessConstant.DAILY))
+                        {
                             returnTime = returnTime.plusDays(count);
-                        if (l.getType() == BusinessConstant.MONTHLY)
+                        }
+                        if (Objects.equals(l.getType(), BusinessConstant.MONTHLY))
+                        {
                             returnTime = returnTime.plusMonths(count);
+                        }
                         return returnTime;
                     }));
 
             // 4.4、补充属性
             bikeCheckOverviewVOS.stream()
-                    .filter(l -> l.getStatus() == StatusConstant.RENTING || l.getStatus() == StatusConstant.TO_RETURN)
+                    .filter(l -> Objects.equals(l.getStatus(), StatusConstant.RENTING) || Objects.equals(l.getStatus(), StatusConstant.TO_RETURN))
                     .forEach(l -> l.setReturnTime(returnTimes.get(l.getId())));
         }
 
@@ -133,7 +136,9 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
 
         // 1.2、如果存在则返回提示信息
         if (one != null)
+        {
             throw new BaseException(MessageConstant.DUPLICATE_NUMBER);
+        }
 
         // 2、属性拷贝
         Bike bike = new Bike();
@@ -167,7 +172,9 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
         String image = bike.getImage();
         List<String> images = new ArrayList<>();
         if (image != null && !image.isEmpty())
+        {
             images = Arrays.asList(image.split(","));
+        }
 
         // 3、拷贝属性
         BikeInfoDTO bikeInfoDTO = new BikeInfoDTO();
@@ -197,14 +204,18 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
                 .one();
 
         // 2.2、如果无或者该单车id与修改的单车id不同，则不允许修改
-        if (one != null && one.getId() != id)
+        if (one != null && !Objects.equals(one.getId(), id))
+        {
             throw new BaseException(MessageConstant.DUPLICATE_NUMBER);
+        }
 
         // 3、将图片路径集合转为字符串
         List<String> images = bikeInfoDTO.getImages();
         String image = null;
         if (images != null && !images.isEmpty())
+        {
             image = String.join(",", images);
+        }
 
         // 4、修改单车基本信息
         Bike bike=new Bike();
@@ -238,25 +249,37 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
         List<Bike> bikes=new ArrayList<>();
 
         // 1、如果是单车类型查询
-        if (type!= TypeConstant.DISCOUNT)
+        if (!Objects.equals(type, TypeConstant.DISCOUNT))
+        {
             bikes = lambdaQuery()
-                    .eq(Bike::getType, type)                                 // 1.1、根据单车类型筛选
-                    .eq(Bike::getStatus, StatusConstant.AVAILABLE)           // 1.2、筛选空闲的单车
+                    // 1.1、根据单车类型筛选
+                    .eq(Bike::getType, type)
+                    // 1.2、筛选空闲的单车
+                    .eq(Bike::getStatus, StatusConstant.AVAILABLE)
                     .list();
+        }
 
         // 2、如果是特惠查询
-        if (type==TypeConstant.DISCOUNT)
-            bikes=lambdaQuery()
-                    .eq(Bike::getStatus,StatusConstant.AVAILABLE)                   // 2.1、筛选空闲的单车
-                    .and(l->l
-                            .le(Bike::getPrice,TypeConstant.DISCOUNT_PRICE)         // 2.2、售价低于特惠售价阈值
-                            .or()                                                   //      或者
-                            .le(Bike::getMonthly,TypeConstant.DISCOUNT_MONTHLY))    //      月租金低于特惠月租金阈值
+        if (Objects.equals(type, TypeConstant.DISCOUNT))
+        {
+            bikes = lambdaQuery()
+                    // 2.1、筛选空闲的单车
+                    .eq(Bike::getStatus, StatusConstant.AVAILABLE)
+                    .and(l -> l
+                            // 2.2、售价低于特惠售价阈值
+                            .le(Bike::getPrice, TypeConstant.DISCOUNT_PRICE)
+                            //      或者
+                            .or()
+                            //      月租金低于特惠月租金阈值
+                            .le(Bike::getMonthly, TypeConstant.DISCOUNT_MONTHLY))
                     .list();
+        }
 
         // 3、如果查询结果为空，返回提示信息
         if (bikes==null||bikes.isEmpty())
+        {
             throw new BaseException(MessageConstant.EMPTY_RESULT);
+        }
 
         // 4、封装结果
         List<BikeInfoDTO> bikeInfoDTOS=new ArrayList<>();
@@ -271,7 +294,9 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
                     String image = l.getImage();
                     List<String> images = new ArrayList<>();
                     if (image != null && !image.isEmpty())
+                    {
                         images = Arrays.asList(image.split(","));
+                    }
                     bikeInfoDTO.setImages(images);
 
                     // 4.3、将DTO存入结果DTOS中
