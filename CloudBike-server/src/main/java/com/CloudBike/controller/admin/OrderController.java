@@ -68,4 +68,17 @@ public class OrderController {
         orderService.update(id);
         return Result.success();
     }
+
+    /**
+     * 还车
+     * @param id
+     * @return
+     */
+    @PutMapping("/back")
+    public Result back(Integer id)
+    {
+        log.info("还车：{}",id);
+        orderService.back(id);
+        return Result.success();
+    }
 }

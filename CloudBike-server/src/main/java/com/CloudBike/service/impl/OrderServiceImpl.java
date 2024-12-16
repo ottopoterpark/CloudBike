@@ -527,4 +527,40 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     .update();
         }
     }
+
+    /**
+     * 还车
+     *
+     * @param id
+     */
+    @Override
+    public void back(Integer id)
+    {
+        // 1、获取订单信息
+        Order order = getById(id);
+
+        // 2、判断订单状态
+        // 2.1、获取订单状态
+        Integer status = order.getStatus();
+
+        // 2.2、如果订单状态不为租赁中或待归还，返回提示信息
+        if (!Objects.equals(status, StatusConstant.RENTING) && !Objects.equals(status, StatusConstant.TO_RETURN))
+        {
+            throw new BaseException(MessageConstant.STATUS_ILLEGAL);
+        }
+
+        // 3、修改订单状态和单车状态
+        // 3.1、修改订单状态（已完成）
+        lambdaUpdate()
+                .eq(Order::getId, id)
+                .set(Order::getStatus, StatusConstant.COMPLETED)
+                .update();
+
+        // 3.2、修改单车状态（空闲）
+        Db.lambdaUpdate(Bike.class)
+                .eq(Bike::getId, order.getBikeId())
+                // 3.1.2、将单车状态设置为租赁中
+                .set(Bike::getStatus, StatusConstant.FREE)
+                .update();
+    }
 }

@@ -70,4 +70,10 @@ public interface IOrderService extends IService<Order> {
      * @param id
      */
     void update(Integer id);
+
+    /**
+     * 还车
+     * @param id
+     */
+    void back(Integer id);
 }
