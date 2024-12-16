@@ -1,5 +1,6 @@
 package com.CloudBike.service.impl;
 
+import com.CloudBike.constant.BusinessConstant;
 import com.CloudBike.constant.MessageConstant;
 import com.CloudBike.constant.StatusConstant;
 import com.CloudBike.constant.TypeConstant;
@@ -12,6 +13,7 @@ import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.OrderMapper;
 import com.CloudBike.result.PageResult;
 import com.CloudBike.service.IOrderService;
+import com.CloudBike.vo.OrderCheckDetailVO;
 import com.CloudBike.vo.OrderCheckOverviewVO;
 import com.CloudBike.vo.OrderOverviewVO;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -320,8 +323,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 // 2.1、根据订单编号模糊匹配（如有）
                 .like(number != null && !number.isEmpty(), Order::getNumber, number)
                 // 2.2、根据下单时间区间筛选（如有）
-                .ge(beginDate != null, Order::getCreateTime, beginDate==null?null:beginDate.atStartOfDay())
-                .lt(endDate != null, Order::getCreateTime, endDate==null?null:endDate.plusDays(1).atStartOfDay())
+                .ge(beginDate != null, Order::getCreateTime, beginDate == null ? null : beginDate.atStartOfDay())
+                .lt(endDate != null, Order::getCreateTime, endDate == null ? null : endDate.plusDays(1).atStartOfDay())
                 .page(p);
 
         // 2.3、如果无符合条件的结果，返回提示信息
@@ -393,11 +396,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 .collect(Collectors.toMap(Bike::getId, Bike::getNumber));
 
         // 7、封装结果
-        List<OrderCheckOverviewVO> orderCheckOverviewVOS=new ArrayList<>();
+        List<OrderCheckOverviewVO> orderCheckOverviewVOS = new ArrayList<>();
         orders.stream()
-                .forEach(l->{
+                .forEach(l ->
+                {
                     // 7.1、订单信息属性拷贝
-                    OrderCheckOverviewVO orderCheckOverviewVO=new OrderCheckOverviewVO();
+                    OrderCheckOverviewVO orderCheckOverviewVO = new OrderCheckOverviewVO();
                     BeanUtils.copyProperties(l, orderCheckOverviewVO);
 
                     // 7.2、用户名属性补充
@@ -412,8 +416,115 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         // 8、返回结果
         return PageResult.builder()
-                .total((long)orderCheckOverviewVOS.size())
+                .total((long) orderCheckOverviewVOS.size())
                 .records(orderCheckOverviewVOS)
                 .build();
+    }
+
+    /**
+     * 根据订单id查看订单详情
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public OrderCheckDetailVO checkOne(Integer id)
+    {
+        // 1、获取订单信息
+        Order order = getById(id);
+
+        // 2、获取订单关联用户信息
+        Integer userId = order.getUserId();
+        User user = Db.getById(userId, User.class);
+
+        // 3、获取订单关联单车信息
+        Integer bikeId = order.getBikeId();
+        Bike bike = Db.getById(bikeId, Bike.class);
+
+        // 4、封装结果
+        // 4.1、订单信息属性拷贝
+        OrderCheckDetailVO orderCheckDetailVO = new OrderCheckDetailVO();
+        BeanUtils.copyProperties(order, orderCheckDetailVO);
+
+        // 4.2、用户信息属性补充
+        orderCheckDetailVO.setUsername(user.getUsername());
+        if (user.getPhone() != null && !user.getPhone().isEmpty())
+        {
+            orderCheckDetailVO.setPhone(user.getOpenid());
+        }
+        orderCheckDetailVO.setCredit(user.getCredit());
+
+        // 4.3、单车信息属性补充
+        orderCheckDetailVO.setBikeNumber(bike.getNumber());
+        orderCheckDetailVO.setName(bike.getName());
+
+        // 4.3.1、将图片路径字符串转为集合
+        String image = bike.getImage();
+        List<String> images = new ArrayList<>();
+        if (image != null && !image.isEmpty())
+        {
+            images = Arrays.asList(image.split(","));
+        }
+        orderCheckDetailVO.setImages(images);
+
+        // 5、返回结果
+        return orderCheckDetailVO;
+    }
+
+    /**
+     * 提车
+     *
+     * @param id
+     */
+    @Override
+    @Transactional
+    public void update(Integer id)
+    {
+        // 1、获取订单信息
+        Order order = getById(id);
+
+        // 2、判断订单状态
+        // 2.1、获取订单状态
+        Integer status = order.getStatus();
+
+        // 2.2、如果订单状态不为待提车，返回提示信息
+        if (!Objects.equals(status, StatusConstant.UNPICKED))
+        {
+            throw new BaseException(MessageConstant.STATUS_ILLEGAL);
+        }
+
+        // 3、修改订单状态和单车状态
+        // 3.1、如果订单为租赁
+        if (!Objects.equals(order.getType(), BusinessConstant.PURCHASE))
+        {
+            lambdaUpdate()
+                    .eq(Order::getId, id)
+                    // 3.1.1、将订单状态设为租赁中
+                    .set(Order::getStatus, StatusConstant.RENTING)
+                    // 3.1.2、更新提车时间
+                    .set(Order::getPickTime, LocalDateTime.now())
+                    .update();
+            Db.lambdaUpdate(Bike.class)
+                    .eq(Bike::getId, order.getBikeId())
+                    // 3.1.2、将单车状态设置为租赁中
+                    .set(Bike::getStatus, StatusConstant.RENTING)
+                    .update();
+        }
+        // 3.2、如果订单为购买
+        if (Objects.equals(order.getType(), BusinessConstant.PURCHASE))
+        {
+            lambdaUpdate()
+                    .eq(Order::getId, id)
+                    // 3.2.1、将订单状态设为已完成
+                    .set(Order::getStatus, StatusConstant.COMPLETED)
+                    // 3.2.2、更新提车时间
+                    .set(Order::getPickTime, LocalDateTime.now())
+                    .update();
+            Db.lambdaUpdate(Bike.class)
+                    .eq(Bike::getId, order.getBikeId())
+                    // 3.2.3、将单车状态设置为已完成
+                    .set(Bike::getStatus, StatusConstant.COMPLETED)
+                    .update();
+        }
     }
 }

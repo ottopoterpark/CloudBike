@@ -24,6 +24,7 @@ public class MessageConstant {
     public static final String CREDIT_LIMIT = "当前信用状态冻结，无法执行操作";
     public static final String DISCOUNT_ILLEGAL = "非法套餐";
     public static final String LIVE_ORDER = "正在进行的业务订单无法删除或取消";
+    public static final String STATUS_ILLEGAL = "当前订单状态无法修改";
 
     /**
      * 操作有误提示信息

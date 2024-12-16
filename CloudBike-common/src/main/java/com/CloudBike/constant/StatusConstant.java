@@ -2,8 +2,10 @@ package com.CloudBike.constant;
 
 /**
  * 状态常量类
+ *
+ * @author unique
  */
-public class  StatusConstant {
+public class StatusConstant {
 
     /**
      * 用户账号状态为正常状态
@@ -44,6 +46,10 @@ public class  StatusConstant {
      * 订单状态：未付款
      */
     public static final Integer UNPAID = 0;
+    /**
+     * 单车状态：空闲
+     */
+    public static final Integer FREE = 0;
 
     /**
      * 单车或订单状态：待提车

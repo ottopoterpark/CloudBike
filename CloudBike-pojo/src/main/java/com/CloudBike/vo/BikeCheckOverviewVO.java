@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 后台单车管理VO
+ * 后台单车管理（简单）VO
  * @author unique
  */
 @Data

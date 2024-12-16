@@ -3,6 +3,8 @@ package com.CloudBike.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -25,6 +27,7 @@ import lombok.experimental.Accessors;
 @TableName("`order`")
 public class Order implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

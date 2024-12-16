@@ -3,6 +3,7 @@ package com.CloudBike.service;
 import com.CloudBike.dto.OrderInfoPageQuery;
 import com.CloudBike.entity.Order;
 import com.CloudBike.result.PageResult;
+import com.CloudBike.vo.OrderCheckDetailVO;
 import com.CloudBike.vo.OrderOverviewVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -56,4 +57,17 @@ public interface IOrderService extends IService<Order> {
      * @return
      */
     PageResult page(OrderInfoPageQuery pageQuery);
+
+    /**
+     * 根据订单id查看订单详情
+     * @param id
+     * @return
+     */
+    OrderCheckDetailVO checkOne(Integer id);
+
+    /**
+     * 提车
+     * @param id
+     */
+    void update(Integer id);
 }

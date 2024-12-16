@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 后台订单VO
+ * 后台订单管理（简单）VO
  * @author unique
  */
 @Data
