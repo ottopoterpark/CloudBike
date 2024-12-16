@@ -18,13 +18,13 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author unique
- * @since 2024-12-06
+ * @since 2024-12-16
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("user")
 @Builder
+@TableName("user")
 public class User implements Serializable {
 
     @Serial
@@ -65,6 +65,11 @@ public class User implements Serializable {
      * 信用（0：冻结，1：正常）
      */
     private Integer credit;
+
+    /**
+     * 头像图片路径
+     */
+    private String image;
 
 
 }

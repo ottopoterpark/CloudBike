@@ -19,7 +19,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import java.io.PrintWriter;
 
 /**
- * jwt令牌校验的拦截器
+ * 用户端拦截器
+ * @author unique
  */
 @Component
 @Slf4j

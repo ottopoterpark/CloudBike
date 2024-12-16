@@ -2,6 +2,7 @@ package com.CloudBike.constant;
 
 /**
  * JWT信息属性常量类
+ * @author unique
  */
 public class JwtClaimsConstant {
     /**

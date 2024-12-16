@@ -2,6 +2,7 @@ package com.CloudBike.constant;
 
 /**
  * 查询常量类
+ * @author unique
  */
 public class TypeConstant {
 

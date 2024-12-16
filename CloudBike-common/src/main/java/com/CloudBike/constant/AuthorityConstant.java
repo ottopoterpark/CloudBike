@@ -2,6 +2,7 @@ package com.CloudBike.constant;
 
 /**
  * 权限常量类
+ * @author unique
  */
 public class AuthorityConstant {
     /**

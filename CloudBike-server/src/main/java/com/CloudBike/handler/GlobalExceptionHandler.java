@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * 全局异常处理器，处理项目中抛出的业务异常
+ * @author unique
  */
 @RestControllerAdvice
 @Slf4j

@@ -15,6 +15,7 @@ import com.CloudBike.service.IRideService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,13 +36,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IRideService {
-
-    private final RideMapper rideMapper;
-
-    public RideServiceImpl(RideMapper rideMapper)
-    {
-        this.rideMapper = rideMapper;
-    }
 
     /**
      * 申请骑行团

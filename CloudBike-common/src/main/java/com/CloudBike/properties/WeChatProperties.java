@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 微信小程序属性配置类
+ * @author unique
  */
 @Component
 @ConfigurationProperties(prefix = "cloudbike.wechat")

@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 @Data
 public class UserInfoDTO implements Serializable {
+
     /**
      * 用户名
      */
@@ -18,4 +19,9 @@ public class UserInfoDTO implements Serializable {
      * 手机号
      */
     private String phone;
+    /**
+     * 头像图片路径
+     */
+    private String image;
+
 }

@@ -237,7 +237,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
         // 4、执行操作
         lambdaUpdate()
-                .eq(id != null, Employee::getId, id)
+                .eq(Employee::getId, id)
                 .set(status != null, Employee::getStatus, status)
                 .update();
     }
@@ -272,8 +272,8 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         String password=DefaultConstant.DEFAULT_PASSWORD;
         password=DigestUtils.md5DigestAsHex(password.getBytes());
         lambdaUpdate()
-                .eq(id!=null,Employee::getId,id)
-                .set(password!=null&&!password.isEmpty(),Employee::getPassword,password)
+                .eq(Employee::getId,id)
+                .set(!password.isEmpty(),Employee::getPassword,password)
                 .update();
     }
 
@@ -306,7 +306,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         newPassword=DigestUtils.md5DigestAsHex(newPassword.getBytes());
         lambdaUpdate()
                 .eq(empId!=null,Employee::getId,empId)
-                .set(newPassword!=null&&!newPassword.isEmpty(),Employee::getPassword,newPassword)
+                .set(!newPassword.isEmpty(),Employee::getPassword,newPassword)
                 .update();
     }
 }

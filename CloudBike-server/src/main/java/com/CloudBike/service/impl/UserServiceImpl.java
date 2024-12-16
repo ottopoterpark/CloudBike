@@ -38,10 +38,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
-    /**
-     * 微信官方获得微信用户openid的url
-     */
-    private final String loginUrl = "https://api.weixin.qq.com/sns/jscode2session";
     private final WeChatProperties weChatProperties;
 
     /**
@@ -61,11 +57,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         paramMap.put("secret", weChatProperties.getSecret());
         paramMap.put("js_code", userLoginDTO.getCode());
         paramMap.put("grant_type", "authorization_code");
+
+        // 微信官方获得微信用户openid的url
+        String loginUrl = "https://api.weixin.qq.com/sns/jscode2session";
         String json = HttpClientUtil.doGet(loginUrl, paramMap);
+
         // 获得响应结果
         JSONObject jsonObject = JSON.parseObject(json);
+
         // 解析响应结果
         String openid = jsonObject.getString("openid");
+
         //        todo 后端开发跳过微信登陆
         if (openid == null || openid.isEmpty())
         {
@@ -167,6 +169,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 2.1、查询用户名一致的用户
         String username = userInfoDTO.getUsername();
         String phone = userInfoDTO.getPhone();
+        String image = userInfoDTO.getImage();
         User user = lambdaQuery()
                 .eq(username != null && !username.isEmpty(), User::getUsername, username)
                 .one();
@@ -187,6 +190,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 .eq(User::getId, userId)
                 .set(username != null && !username.isEmpty(), User::getUsername, username)
                 .set(phone != null && !phone.isEmpty(), User::getPhone, phone)
+                .set(image!=null&&!image.isEmpty(),User::getImage,image)
                 .update();
     }
 

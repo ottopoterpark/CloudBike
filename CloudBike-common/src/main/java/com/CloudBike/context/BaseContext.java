@@ -2,6 +2,7 @@ package com.CloudBike.context;
 
 /**
  * 共享上下文用户类
+ * @author unique
  */
 public class BaseContext {
 

@@ -18,6 +18,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.io.PrintWriter;
 
+/**
+ * 管理端拦截器
+ * @author unique
+ */
 @Component
 @Slf4j
 @RequiredArgsConstructor

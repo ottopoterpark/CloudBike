@@ -2,6 +2,7 @@ package com.CloudBike.constant;
 
 /**
  * 默认值常量类
+ * @author unique
  */
 public class DefaultConstant {
     /**

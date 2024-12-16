@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Http工具类
+ * HttpClientt工具类
+ * @author unique
  */
 public class HttpClientUtil {
 

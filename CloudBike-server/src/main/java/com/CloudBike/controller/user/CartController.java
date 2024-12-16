@@ -5,7 +5,6 @@ import com.CloudBike.result.Result;
 import com.CloudBike.service.ICartService;
 import com.CloudBike.vo.CartInfoVO;
 import com.CloudBike.vo.OrderSubmitVO;
-import com.alibaba.fastjson.util.RyuDouble;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * JWT令牌属性配置类
+ * @author unique
  */
 @Component
 @ConfigurationProperties(prefix = "cloudbike.jwt")

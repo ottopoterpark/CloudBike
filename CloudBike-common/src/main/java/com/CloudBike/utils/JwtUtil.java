@@ -9,6 +9,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * JWT令牌工具类
+ * @author unique
+ */
 public class JwtUtil {
     /**
      * 生成jwt

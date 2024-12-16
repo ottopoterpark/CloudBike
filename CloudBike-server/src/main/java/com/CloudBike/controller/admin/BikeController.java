@@ -3,7 +3,6 @@ package com.CloudBike.controller.admin;
 
 import com.CloudBike.dto.BikeInfoDTO;
 import com.CloudBike.dto.BikeInfoPageQuery;
-import com.CloudBike.entity.Bike;
 import com.CloudBike.result.PageResult;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.IBikeService;

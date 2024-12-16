@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 阿里云存储信息配置类
+ * @author unique
  */
 @Component
 @ConfigurationProperties(prefix = "cloudbike.alioss")

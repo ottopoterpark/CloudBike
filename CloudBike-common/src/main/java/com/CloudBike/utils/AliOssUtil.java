@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
 
+/**
+ * 阿里云OSS对象存储工具类
+ */
 @Data
 @AllArgsConstructor
 @Slf4j
