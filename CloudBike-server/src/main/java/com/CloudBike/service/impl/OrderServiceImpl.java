@@ -372,7 +372,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             // 5.2、根据筛选结果筛选订单
             List<Integer> finalUserIds = userIds;
             orders = orders.stream()
-                    .filter(l -> !finalUserIds.contains(l.getUserId()))
+                    .filter(l -> finalUserIds.contains(l.getUserId()))
                     .toList();
 
             // 5.3、如果筛选结果为空
