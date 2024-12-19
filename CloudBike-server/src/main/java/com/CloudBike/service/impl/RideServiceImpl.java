@@ -15,7 +15,6 @@ import com.CloudBike.service.IRideService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +38,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
     /**
      * 申请骑行团
+     *
      * @param rideInfoDTO
      */
     @Override
@@ -86,14 +86,14 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
         // 4、如果用户信用状态正常且当天无其他骑行活动，允许申请
         // 4.1、属性拷贝
-        Ride ride=new Ride();
-        BeanUtils.copyProperties(rideInfoDTO,ride);
+        Ride ride = new Ride();
+        BeanUtils.copyProperties(rideInfoDTO, ride);
         ride.setUserId(userId);
 
         // 4.2、将图片路径集合转为字符串
         List<String> images = rideInfoDTO.getImages();
-        String image=null;
-        if (images!=null&&!images.isEmpty())
+        String image = null;
+        if (images != null && !images.isEmpty())
         {
             image = String.join(",", images);
         }
@@ -140,10 +140,10 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 .orderByAsc(Ride::getDepartureTime)
                 .list();
 
-        // 2、如果无符合条件的结果，返回提示信息
+        // 2、如果无符合条件的结果，返回空结果
         if (list == null || list.isEmpty())
         {
-            throw new BaseException(MessageConstant.EMPTY_RESULT);
+            return Collections.emptyList();
         }
 
         // 3、将查询信息转化为对应DTOS
@@ -170,8 +170,8 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
             // 3.5、将图片路径字符串转换为集合
             String image = l.getImage();
-            List<String> images=new ArrayList<>();
-            if (image!=null&&!image.isEmpty())
+            List<String> images = new ArrayList<>();
+            if (image != null && !image.isEmpty())
             {
                 images = Arrays.asList(image.split(","));
             }
@@ -208,7 +208,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
         // 3、封装属性
         // 3.1、属性拷贝
-        RideInfoDTO rideInfoDTO=new RideInfoDTO();
+        RideInfoDTO rideInfoDTO = new RideInfoDTO();
         BeanUtils.copyProperties(ride, rideInfoDTO);
 
         // 3.2、属性补充
@@ -217,8 +217,8 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
         // 3.3、将图片路径字符串转换为集合
         String image = ride.getImage();
-        List<String> images=new ArrayList<>();
-        if (image!=null&&!image.isEmpty())
+        List<String> images = new ArrayList<>();
+        if (image != null && !image.isEmpty())
         {
             images = Arrays.asList(image.split(","));
         }
@@ -332,10 +332,13 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 .orderByAsc(Ride::getCreateTime)
                 .page(p);
 
-        // 2.1、如果结果为空，则返回提示信息
+        // 2.1、如果结果为空，则返回空结果
         if (p.getTotal() == 0)
         {
-            throw new BaseException(MessageConstant.EMPTY_RESULT);
+            return PageResult.builder()
+                    .total((long) 0)
+                    .records(Collections.emptyList())
+                    .build();
         }
 
         // 3、对结果进行属性补充
@@ -379,10 +382,13 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                     .filter(l -> l.getUsername().contains(username))
                     .toList();
 
-            // 5.1、如果结果为空，返回提示信息
+            // 5.1、如果结果为空，返回空结果
             if (list.isEmpty())
             {
-                throw new BaseException(MessageConstant.EMPTY_RESULT);
+                return PageResult.builder()
+                        .total((long)0)
+                        .records(Collections.emptyList())
+                        .build();
             }
 
             // 5.2、封装分页查询结果
@@ -419,7 +425,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
         // 3、封装结果
         // 3.1、属性拷贝
-        RideInfoDTO rideInfoDTO=new RideInfoDTO();
+        RideInfoDTO rideInfoDTO = new RideInfoDTO();
         BeanUtils.copyProperties(ride, rideInfoDTO);
 
         // 3.2、属性补充
@@ -431,7 +437,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
         // 3.3、将图片路径字符串转换为集合
         String image = ride.getImage();
-        List<String> images=new ArrayList<>();
+        List<String> images = new ArrayList<>();
         if (image != null && !image.isEmpty())
         {
             images = Arrays.asList(image.split(","));
@@ -467,8 +473,8 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
             // 1.3、将发起者发起骑行次数-1
             Integer rideTimes = user.getRideTimes() - 1;
             Db.lambdaUpdate(User.class)
-                    .eq(User::getId,userId)
-                    .set(User::getRideTimes,rideTimes)
+                    .eq(User::getId, userId)
+                    .set(User::getRideTimes, rideTimes)
                     .update();
         }
 
@@ -501,10 +507,10 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 .map(RideDetail::getRideId)
                 .toList();
 
-        // 2.2、如果结果为空，返回提示信息
+        // 2.2、如果结果为空，返回空结果
         if (rideIds.isEmpty())
         {
-            throw new BaseException(MessageConstant.EMPTY_RESULT);
+            return Collections.emptyList();
         }
 
         // 2.3、根据活动id获取这些活动
@@ -518,12 +524,12 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 .forEach(l ->
                 {
                     // 3.1、属性拷贝
-                    RideInfoDTO rideInfoDTO=new RideInfoDTO();
+                    RideInfoDTO rideInfoDTO = new RideInfoDTO();
                     BeanUtils.copyProperties(l, rideInfoDTO);
 
                     // 3.2、将图片路径字符串转换为集合
                     String image = l.getImage();
-                    List<String> images=new ArrayList<>();
+                    List<String> images = new ArrayList<>();
                     if (image != null && !image.isEmpty())
                     {
                         images = Arrays.asList(image.split(","));
@@ -566,10 +572,10 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         }
 
         // 5、返回结果
-        // 5.1、如果筛选后结果为空，返回提示消息
+        // 5.1、如果筛选后结果为空，返回空结果
         if (result.isEmpty())
         {
-            throw new BaseException(MessageConstant.EMPTY_RESULT);
+            return Collections.emptyList();
         }
 
         // 5.2、返回结果

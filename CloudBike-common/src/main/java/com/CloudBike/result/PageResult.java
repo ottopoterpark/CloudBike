@@ -17,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class PageResult implements Serializable {
+
     /**
      * 总记录数
      */

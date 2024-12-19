@@ -58,12 +58,15 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
                 .page(p);
 
         // 3、分页查询结果封装
-        // 3.1、如果查询结果为空，返回提示信息
+        // 3.1、如果查询结果为空，返回空结果
         long total = p.getTotal();
         List<Bike> records = p.getRecords();
         if (records == null || records.isEmpty())
         {
-            throw new BaseException(MessageConstant.EMPTY_RESULT);
+            return PageResult.builder()
+                    .total((long)0)
+                    .records(Collections.emptyList())
+                    .build();
         }
 
         // 3.2、封装属性
@@ -275,10 +278,10 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
                     .list();
         }
 
-        // 3、如果查询结果为空，返回提示信息
+        // 3、如果查询结果为空，返回空结果
         if (bikes==null||bikes.isEmpty())
         {
-            throw new BaseException(MessageConstant.EMPTY_RESULT);
+            return Collections.emptyList();
         }
 
         // 4、封装结果

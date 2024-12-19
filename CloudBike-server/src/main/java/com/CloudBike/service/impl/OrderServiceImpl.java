@@ -57,10 +57,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 .orderByDesc(Order::getCreateTime)
                 .list();
 
-        // 2.1、如果订单为空，返回提示信息
+        // 2.1、如果订单为空，返回空结果
         if (orders == null || orders.isEmpty())
         {
-            throw new BaseException(MessageConstant.EMPTY_RESULT);
+            return Collections.emptyList();
         }
 
         // 3、根据category筛选
@@ -71,10 +71,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     .toList();
         }
 
-        // 3.1、如果查询结果为空，返回提示信息
+        // 3.1、如果查询结果为空，返回空结果
         if (orders.isEmpty())
         {
-            throw new BaseException(MessageConstant.EMPTY_RESULT);
+            return Collections.emptyList();
         }
 
         // 4、封装属性
@@ -327,11 +327,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 .lt(endDate != null, Order::getCreateTime, endDate == null ? null : endDate.plusDays(1).atStartOfDay())
                 .page(p);
 
-        // 2.3、如果无符合条件的结果，返回提示信息
+        // 2.3、如果无符合条件的结果，返回空结果
         List<Order> orders = p.getRecords();
         if (orders == null || orders.isEmpty())
         {
-            throw new BaseException(MessageConstant.EMPTY_RESULT);
+            return PageResult.builder()
+                    .total((long) 0)
+                    .records(Collections.emptyList())
+                    .build();
         }
 
         // 3、根据业务类型筛选
@@ -342,10 +345,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     .toList();
         }
 
-        // 3.1、如果无符合条件的结果，返回提示信息
+        // 3.1、如果无符合条件的结果，返回空结果
         if (orders.isEmpty())
         {
-            throw new BaseException(MessageConstant.EMPTY_RESULT);
+            return PageResult.builder()
+                    .total((long) 0)
+                    .records(Collections.emptyList())
+                    .build();
         }
 
         // 4、获取关联的用户信息
@@ -378,7 +384,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             // 5.3、如果筛选结果为空
             if (orders.isEmpty())
             {
-                throw new BaseException(MessageConstant.EMPTY_RESULT);
+                return PageResult.builder()
+                        .total((long) 0)
+                        .records(Collections.emptyList())
+                        .build();
             }
         }
 

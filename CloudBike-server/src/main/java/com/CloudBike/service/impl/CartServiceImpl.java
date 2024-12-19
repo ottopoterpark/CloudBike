@@ -115,10 +115,10 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                 .eq(Cart::getUserId, userId)
                 .list();
 
-        // 2.1、如果购物车为空，返回提示信息
+        // 2.1、如果购物车为空，返回空结果
         if (carts == null || carts.isEmpty())
         {
-            throw new BaseException(MessageConstant.EMPTY_RESULT);
+            return Collections.emptyList();
         }
 
         // 3、获取购物车关联的单车

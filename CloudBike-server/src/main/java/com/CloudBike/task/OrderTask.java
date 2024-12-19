@@ -21,8 +21,9 @@ import java.util.stream.Collectors;
 
 /**
  * 订单定时任务类
+ * @author unique
  */
-@Component
+//@Component
 @Slf4j
 public class OrderTask {
 
