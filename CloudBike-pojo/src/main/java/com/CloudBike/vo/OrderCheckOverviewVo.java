@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * @author unique
  */
 @Data
-public class OrderCheckOverviewVO {
+public class OrderCheckOverviewVo {
 
     /**
      * 订单id

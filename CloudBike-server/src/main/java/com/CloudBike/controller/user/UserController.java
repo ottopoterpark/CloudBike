@@ -1,15 +1,15 @@
 package com.CloudBike.controller.user;
 
 import com.CloudBike.constant.JwtClaimsConstant;
-import com.CloudBike.dto.UserInfoDTO;
-import com.CloudBike.dto.UserLoginDTO;
+import com.CloudBike.dto.UserInfoDto;
+import com.CloudBike.dto.UserLoginDto;
 import com.CloudBike.entity.User;
 import com.CloudBike.properties.JwtProperties;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.IUserService;
 import com.CloudBike.utils.JwtUtil;
-import com.CloudBike.vo.BalanceVO;
-import com.CloudBike.vo.UserLoginVO;
+import com.CloudBike.vo.BalanceVo;
+import com.CloudBike.vo.UserLoginVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -36,16 +36,16 @@ public class UserController {
 
     /**
      * 微信用户登录
-     * @param userLoginDTO
+     * @param userLoginDto
      * @return
      */
     @PostMapping("/login")
-    public Result<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO)
+    public Result<UserLoginVo> login(@RequestBody UserLoginDto userLoginDto)
     {
-        log.info("微信用户登录：{}",userLoginDTO);
+        log.info("微信用户登录：{}",userLoginDto);
 
         // 微信登录
-        User user =userService.login(userLoginDTO);
+        User user =userService.login(userLoginDto);
 
         // 为微信用户生成jwt令牌
         Map<String, Object> claims=new HashMap<>();
@@ -53,7 +53,7 @@ public class UserController {
         String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
 
         // 封装结果
-        UserLoginVO data = UserLoginVO.builder()
+        UserLoginVo data = UserLoginVo.builder()
                 .id(user.getId())
                 .openid(user.getOpenid())
                 .token(token)
@@ -81,10 +81,10 @@ public class UserController {
      * @return
      */
     @GetMapping
-    public Result<UserInfoDTO> one()
+    public Result<UserInfoDto> one()
     {
         log.info("查看个人信息");
-        UserInfoDTO userInfoDTO=userService.one();
+        UserInfoDto userInfoDTO=userService.one();
         return Result.success(userInfoDTO);
     }
 
@@ -94,7 +94,7 @@ public class UserController {
      * @return
      */
     @PutMapping
-    public Result update(UserInfoDTO userInfoDTO)
+    public Result update(UserInfoDto userInfoDTO)
     {
         log.info("修改个人信息：{}",userInfoDTO);
         userService.update(userInfoDTO);
@@ -106,10 +106,10 @@ public class UserController {
      * @return
      */
     @GetMapping("/balance")
-    public Result<BalanceVO> balance()
+    public Result<BalanceVo> balance()
     {
         log.info("查询个人余额");
-        BalanceVO balanceVO=userService.balance();
+        BalanceVo balanceVO=userService.balance();
         return Result.success(balanceVO);
     }
 

@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author unique
  */
 @Data
-public class UserLoginDTO implements Serializable {
+public class UserLoginDto implements Serializable {
     /**
      * 微信授权码
      */

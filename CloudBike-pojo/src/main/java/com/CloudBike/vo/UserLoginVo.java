@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 @Builder
 @Data
-public class UserLoginVO implements Serializable {
+public class UserLoginVo implements Serializable {
     /**
      * 用户id
      */

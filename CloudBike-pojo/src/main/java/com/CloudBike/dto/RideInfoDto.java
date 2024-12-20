@@ -12,7 +12,7 @@ import java.util.List;
  * @author unique
  */
 @Data
-public class RideInfoDTO implements Serializable {
+public class RideInfoDto implements Serializable {
     /**
      * 骑行团id
      */

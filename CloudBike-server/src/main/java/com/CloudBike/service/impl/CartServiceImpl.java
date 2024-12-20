@@ -11,8 +11,8 @@ import com.CloudBike.entity.Order;
 import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.CartMapper;
 import com.CloudBike.service.ICartService;
-import com.CloudBike.vo.CartInfoVO;
-import com.CloudBike.vo.OrderSubmitVO;
+import com.CloudBike.vo.CartInfoVo;
+import com.CloudBike.vo.OrderSubmitVo;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import lombok.RequiredArgsConstructor;
@@ -105,7 +105,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
      */
     @Override
     @Transactional
-    public List<CartInfoVO> listAll()
+    public List<CartInfoVo> listAll()
     {
         // 1、获取用户信息
         Integer userId = BaseContext.getCurrentId();
@@ -133,7 +133,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                 .list();
 
         // 4、补充属性
-        List<CartInfoVO> cartInfoVOS = new ArrayList<>();
+        List<CartInfoVo> cartInfoVos = new ArrayList<>();
 
         // 4.1、将单车id与单车组成Map
         Map<Integer, Bike> bikeMap = bikes.stream()
@@ -145,7 +145,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                 {
 
                     // 4.2.1、属性拷贝
-                    CartInfoVO cartInfoVO = new CartInfoVO();
+                    CartInfoVo cartInfoVO = new CartInfoVo();
                     BeanUtils.copyProperties(l, cartInfoVO);
 
                     // 4.2.2、属性补充（单车编号，单车名称）
@@ -165,11 +165,11 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                     cartInfoVO.setImages(images);
 
                     // 4.2.5、将VO存入VOS
-                    cartInfoVOS.add(cartInfoVO);
+                    cartInfoVos.add(cartInfoVO);
                 });
 
         // 5、返回结果
-        return cartInfoVOS;
+        return cartInfoVos;
     }
 
     /**
@@ -258,7 +258,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
      */
     @Override
     @Transactional
-    public OrderSubmitVO submit(Integer id)
+    public OrderSubmitVo submit(Integer id)
     {
         // 1、获取当前用户信息
         Integer userId = BaseContext.getCurrentId();
@@ -290,7 +290,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         Db.save(order);
 
         // 6、返回订单id
-        OrderSubmitVO orderSubmitVO=new OrderSubmitVO();
+        OrderSubmitVo orderSubmitVO=new OrderSubmitVo();
         orderSubmitVO.setId(order.getId());
         return orderSubmitVO;
     }

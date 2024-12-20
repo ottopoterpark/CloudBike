@@ -3,7 +3,7 @@ package com.CloudBike.controller.user;
 
 import com.CloudBike.result.Result;
 import com.CloudBike.service.IOrderService;
-import com.CloudBike.vo.OrderOverviewVO;
+import com.CloudBike.vo.OrderOverviewVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -32,11 +32,11 @@ public class OrderController {
      * @return
      */
     @GetMapping("/list")
-    public Result<List<OrderOverviewVO>> list(Integer category)
+    public Result<List<OrderOverviewVo>> list(Integer category)
     {
         log.info("查看我的订单：{}",category);
-        List<OrderOverviewVO> orderOverviewVOS = orderService.list(category);
-        return Result.success(orderOverviewVOS);
+        List<OrderOverviewVo> orderOverviewVos = orderService.list(category);
+        return Result.success(orderOverviewVos);
     }
 
     /**
@@ -45,10 +45,10 @@ public class OrderController {
      * @return
      */
     @GetMapping
-    public Result<OrderOverviewVO> one(Integer id)
+    public Result<OrderOverviewVo> one(Integer id)
     {
         log.info("根据订单id查看订单：{}",id);
-        OrderOverviewVO orderOverviewVO=orderService.one(id);
+        OrderOverviewVo orderOverviewVO=orderService.one(id);
         return Result.success(orderOverviewVO);
     }
 

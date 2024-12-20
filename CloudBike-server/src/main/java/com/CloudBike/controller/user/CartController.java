@@ -3,8 +3,8 @@ package com.CloudBike.controller.user;
 import com.CloudBike.entity.Cart;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.ICartService;
-import com.CloudBike.vo.CartInfoVO;
-import com.CloudBike.vo.OrderSubmitVO;
+import com.CloudBike.vo.CartInfoVo;
+import com.CloudBike.vo.OrderSubmitVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -47,10 +47,10 @@ public class CartController {
      * @return
      */
     @GetMapping("/list")
-    public Result<List<CartInfoVO>> list()
+    public Result<List<CartInfoVo>> list()
     {
         log.info("查询我的购物车");
-        List<CartInfoVO> list = cartService.listAll();
+        List<CartInfoVo> list = cartService.listAll();
         return Result.success(list);
     }
 
@@ -88,10 +88,10 @@ public class CartController {
      * @return
      */
     @PostMapping("/submit")
-    public Result<OrderSubmitVO> submit(Integer id)
+    public Result<OrderSubmitVo> submit(Integer id)
     {
         log.info("提交订单：{}",id);
-        OrderSubmitVO orderSubmitVO= cartService.submit(id);
+        OrderSubmitVo orderSubmitVO= cartService.submit(id);
         return Result.success(orderSubmitVO);
     }
 }

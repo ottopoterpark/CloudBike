@@ -2,15 +2,15 @@ package com.CloudBike.controller.admin;
 
 import com.CloudBike.constant.JwtClaimsConstant;
 import com.CloudBike.dto.EmployeeInfoPageQuery;
-import com.CloudBike.dto.LoginDTO;
-import com.CloudBike.dto.PasswordDTO;
+import com.CloudBike.dto.LoginDto;
+import com.CloudBike.dto.PasswordDto;
 import com.CloudBike.entity.Employee;
 import com.CloudBike.properties.JwtProperties;
 import com.CloudBike.result.PageResult;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.IEmployeeService;
 import com.CloudBike.utils.JwtUtil;
-import com.CloudBike.vo.LoginVO;
+import com.CloudBike.vo.LoginVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -38,15 +38,15 @@ public class EmployeeController {
 
     /**
      * 员工登录
-     * @param loginDTO
+     * @param loginDto
      * @return
      */
     @PostMapping("/login")
-    public Result<LoginVO> login(@RequestBody LoginDTO loginDTO)
+    public Result<LoginVo> login(@RequestBody LoginDto loginDto)
     {
-        log.info("员工登录：{}", loginDTO);
+        log.info("员工登录：{}", loginDto);
 
-        Employee employee = employeeService.login(loginDTO);
+        Employee employee = employeeService.login(loginDto);
 
         // 登录成功后，生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
@@ -57,7 +57,7 @@ public class EmployeeController {
                 claims);
 
         // 返回登录信息
-        LoginVO loginVO = LoginVO.builder()
+        LoginVo loginVO = LoginVo.builder()
                 .id(employee.getId())
                 .username(employee.getUsername())
                 .name(employee.getName())
@@ -148,14 +148,14 @@ public class EmployeeController {
 
     /**
      * 修改密码
-     * @param passwordDTO
+     * @param passwordDto
      * @return
      */
     @PutMapping("/password")
-    public Result changePassword(@RequestBody PasswordDTO passwordDTO)
+    public Result changePassword(@RequestBody PasswordDto passwordDto)
     {
-        log.info("修改密码：{}",passwordDTO);
-        employeeService.changePassword(passwordDTO);
+        log.info("修改密码：{}",passwordDto);
+        employeeService.changePassword(passwordDto);
         return Result.success();
     }
 }

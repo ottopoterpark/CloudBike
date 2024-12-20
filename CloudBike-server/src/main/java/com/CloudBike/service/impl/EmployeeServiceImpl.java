@@ -6,8 +6,8 @@ import com.CloudBike.constant.MessageConstant;
 import com.CloudBike.constant.StatusConstant;
 import com.CloudBike.context.BaseContext;
 import com.CloudBike.dto.EmployeeInfoPageQuery;
-import com.CloudBike.dto.LoginDTO;
-import com.CloudBike.dto.PasswordDTO;
+import com.CloudBike.dto.LoginDto;
+import com.CloudBike.dto.PasswordDto;
 import com.CloudBike.entity.Employee;
 import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.EmployeeMapper;
@@ -36,16 +36,16 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
     /**
      * 员工登录
      *
-     * @param loginDTO
+     * @param loginDto
      * @return
      */
     @Override
-    public Employee login(LoginDTO loginDTO)
+    public Employee login(LoginDto loginDto)
     {
 
         // 1、获取用户名和密码
-        String username = loginDTO.getUsername();
-        String password = loginDTO.getPassword();
+        String username = loginDto.getUsername();
+        String password = loginDto.getPassword();
 
         // 2、根据用户名查询数据库中的数据
         Employee employee = lambdaQuery().eq(Employee::getUsername, username).one();
@@ -279,14 +279,14 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
     /**
      * 修改密码
-     * @param passwordDTO
+     * @param passwordDto
      */
     @Override
-    public void changePassword(PasswordDTO passwordDTO)
+    public void changePassword(PasswordDto passwordDto)
     {
         // 1、获取原始密码和新密码
-        String oldPassword = passwordDTO.getOldPassword();
-        String newPassword = passwordDTO.getNewPassword();
+        String oldPassword = passwordDto.getOldPassword();
+        String newPassword = passwordDto.getNewPassword();
 
         // 2、获取当前后台员工id
         Integer empId = BaseContext.getCurrentId();

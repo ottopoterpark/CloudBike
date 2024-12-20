@@ -5,6 +5,7 @@ package com.CloudBike.constant;
  * @author unique
  */
 public class DiscountConstant {
+
     /**
      * 具体套餐
      */

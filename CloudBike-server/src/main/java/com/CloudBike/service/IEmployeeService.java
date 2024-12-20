@@ -1,8 +1,8 @@
 package com.CloudBike.service;
 
 import com.CloudBike.dto.EmployeeInfoPageQuery;
-import com.CloudBike.dto.LoginDTO;
-import com.CloudBike.dto.PasswordDTO;
+import com.CloudBike.dto.LoginDto;
+import com.CloudBike.dto.PasswordDto;
 import com.CloudBike.entity.Employee;
 import com.CloudBike.result.PageResult;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -24,7 +24,7 @@ public interface IEmployeeService extends IService<Employee> {
      * @param loginDTO
      * @return
      */
-    Employee login(LoginDTO loginDTO);
+    Employee login(LoginDto loginDto);
 
     /**
      * 员工分页查询
@@ -70,5 +70,5 @@ public interface IEmployeeService extends IService<Employee> {
      * 修改密码
      * @param passwordDTO
      */
-    void changePassword(PasswordDTO passwordDTO);
+    void changePassword(PasswordDto passwordDto);
 }

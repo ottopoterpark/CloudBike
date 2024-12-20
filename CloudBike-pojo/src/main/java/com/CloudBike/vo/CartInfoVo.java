@@ -10,7 +10,7 @@ import java.util.List;
  * @author unique
  */
 @Data
-public class CartInfoVO implements Serializable {
+public class CartInfoVo implements Serializable {
     /**
      * 购物车id
      */

@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author unique
  */
 @Data
-public class OrderSubmitVO implements Serializable {
+public class OrderSubmitVo implements Serializable {
     /**
      * 订单id
      */

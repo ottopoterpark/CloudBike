@@ -1,8 +1,7 @@
 package com.CloudBike.controller.user;
 
 
-import com.CloudBike.dto.RideInfoDTO;
-import com.CloudBike.entity.Ride;
+import com.CloudBike.dto.RideInfoDto;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.IRideService;
 import com.CloudBike.service.impl.RideServiceImpl;
@@ -30,14 +29,14 @@ public class RideController {
 
     /**
      * 申请骑行团
-     * @param rideInfoDTO
+     * @param rideInfoDto
      * @return
      */
     @PostMapping
-    public Result insert(@RequestBody RideInfoDTO rideInfoDTO)
+    public Result insert(@RequestBody RideInfoDto rideInfoDto)
     {
-        log.info("申请骑行团：{}",rideInfoDTO);
-        rideService.insert(rideInfoDTO);
+        log.info("申请骑行团：{}",rideInfoDto);
+        rideService.insert(rideInfoDto);
         return Result.success();
     }
 
@@ -47,10 +46,10 @@ public class RideController {
      * @return
      */
     @GetMapping("/list")
-    public Result<List<RideInfoDTO>> list(String name)
+    public Result<List<RideInfoDto>> list(String name)
     {
         log.info("查询最近的骑行团：{}",name);
-        List<RideInfoDTO> rideOverviewVOS= rideService.list(name);
+        List<RideInfoDto> rideOverviewVOS= rideService.list(name);
         return Result.success(rideOverviewVOS);
     }
 
@@ -60,10 +59,10 @@ public class RideController {
      * @return
      */
     @GetMapping
-    public Result<RideInfoDTO> one(Integer id)
+    public Result<RideInfoDto> one(Integer id)
     {
         log.info("根据id查询骑行团详情：{}",id);
-        RideInfoDTO rideInfoDTO=rideService.one(id);
+        RideInfoDto rideInfoDTO=rideService.one(id);
         return Result.success(rideInfoDTO);
     }
 
@@ -86,10 +85,10 @@ public class RideController {
      * @return
      */
     @GetMapping("/history")
-    public Result<List<RideInfoDTO>> history(Integer status)
+    public Result<List<RideInfoDto>> history(Integer status)
     {
         log.info("查询我的骑行活动：{}",status);
-        List<RideInfoDTO> list=rideService.history(status);
+        List<RideInfoDto> list=rideService.history(status);
         return Result.success(list);
     }
 

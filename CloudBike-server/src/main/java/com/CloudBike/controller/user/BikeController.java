@@ -1,7 +1,7 @@
 package com.CloudBike.controller.user;
 
 
-import com.CloudBike.dto.BikeInfoDTO;
+import com.CloudBike.dto.BikeInfoDto;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.IBikeService;
 import lombok.RequiredArgsConstructor;
@@ -36,11 +36,11 @@ public class BikeController {
      * @return
      */
     @GetMapping("/category")
-    public Result<List<BikeInfoDTO>> category(Integer type)
+    public Result<List<BikeInfoDto>> category(Integer type)
     {
         log.info("单车分类查询：{}",type);
-        List<BikeInfoDTO> bikeInfoDTOS=bikeService.category(type);
-        return Result.success(bikeInfoDTOS);
+        List<BikeInfoDto> bikeInfoDtos =bikeService.category(type);
+        return Result.success(bikeInfoDtos);
     }
 
     /**
@@ -49,10 +49,10 @@ public class BikeController {
      * @return
      */
     @GetMapping("/{id}")
-    public Result<BikeInfoDTO> one(@PathVariable Integer id)
+    public Result<BikeInfoDto> one(@PathVariable Integer id)
     {
         log.info("根据id查询单车详情：{}",id);
-        BikeInfoDTO bikeInfoDTO=bikeService.get(id);
+        BikeInfoDto bikeInfoDTO=bikeService.get(id);
         return Result.success(bikeInfoDTO);
     }
 }

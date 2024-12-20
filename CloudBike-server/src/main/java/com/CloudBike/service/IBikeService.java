@@ -1,6 +1,6 @@
 package com.CloudBike.service;
 
-import com.CloudBike.dto.BikeInfoDTO;
+import com.CloudBike.dto.BikeInfoDto;
 import com.CloudBike.dto.BikeInfoPageQuery;
 import com.CloudBike.entity.Bike;
 import com.CloudBike.result.PageResult;
@@ -28,20 +28,20 @@ public interface IBikeService extends IService<Bike> {
      * 新增单车
      * @param bikeInfoDTO
      */
-    void insert(BikeInfoDTO bikeInfoDTO);
+    void insert(BikeInfoDto bikeInfoDto);
 
     /**
      * 根据id查询订单详情
      * @param id
      * @return
      */
-    BikeInfoDTO get(Integer id);
+    BikeInfoDto get(Integer id);
 
     /**
      * 修改单车基本信息
      * @param bikeInfoDTO
      */
-    void update(BikeInfoDTO bikeInfoDTO);
+    void update(BikeInfoDto bikeInfoDto);
 
     /**
      * 批量删除单车
@@ -54,5 +54,5 @@ public interface IBikeService extends IService<Bike> {
      * @param type
      * @return
      */
-    List<BikeInfoDTO> category(Integer type);
+    List<BikeInfoDto> category(Integer type);
 }

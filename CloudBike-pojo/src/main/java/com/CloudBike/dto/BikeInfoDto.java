@@ -10,7 +10,7 @@ import java.util.List;
  * @author unique
  */
 @Data
-public class BikeInfoDTO implements Serializable {
+public class BikeInfoDto implements Serializable {
     /**
      * 单车主键
      */

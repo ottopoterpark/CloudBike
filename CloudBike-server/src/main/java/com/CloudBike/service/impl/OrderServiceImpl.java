@@ -13,9 +13,9 @@ import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.OrderMapper;
 import com.CloudBike.result.PageResult;
 import com.CloudBike.service.IOrderService;
-import com.CloudBike.vo.OrderCheckDetailVO;
-import com.CloudBike.vo.OrderCheckOverviewVO;
-import com.CloudBike.vo.OrderOverviewVO;
+import com.CloudBike.vo.OrderCheckDetailVo;
+import com.CloudBike.vo.OrderCheckOverviewVo;
+import com.CloudBike.vo.OrderOverviewVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
@@ -46,7 +46,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * @return
      */
     @Override
-    public List<OrderOverviewVO> list(Integer category)
+    public List<OrderOverviewVo> list(Integer category)
     {
         // 1、获取用户id
         Integer userId = BaseContext.getCurrentId();
@@ -89,11 +89,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 .collect(Collectors.toMap(Bike::getId, l -> l));
 
         // 4.2、补充属性
-        List<OrderOverviewVO> orderOverviewVOS = new ArrayList<>();
+        List<OrderOverviewVo> orderOverviewVos = new ArrayList<>();
         orders.stream()
                 .forEach(l ->
                 {
-                    OrderOverviewVO orderOverviewVO = new OrderOverviewVO();
+                    OrderOverviewVo orderOverviewVO = new OrderOverviewVo();
 
                     // 4.2.1、属性拷贝
                     BeanUtils.copyProperties(l, orderOverviewVO);
@@ -113,11 +113,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     orderOverviewVO.setImages(images);
 
                     // 4.2.4、将VO存入VOS
-                    orderOverviewVOS.add(orderOverviewVO);
+                    orderOverviewVos.add(orderOverviewVO);
                 });
 
         // 5、返回数据
-        return orderOverviewVOS;
+        return orderOverviewVos;
     }
 
     /**
@@ -127,7 +127,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * @return
      */
     @Override
-    public OrderOverviewVO one(Integer id)
+    public OrderOverviewVo one(Integer id)
     {
         // 1、根据id获取订单
         Order order = getById(id);
@@ -137,7 +137,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         Bike bike = Db.getById(bikeId, Bike.class);
 
         // 3、封装属性
-        OrderOverviewVO orderOverviewVO = new OrderOverviewVO();
+        OrderOverviewVo orderOverviewVO = new OrderOverviewVo();
 
         // 3.1、属性拷贝
         BeanUtils.copyProperties(order, orderOverviewVO);
@@ -405,12 +405,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 .collect(Collectors.toMap(Bike::getId, Bike::getNumber));
 
         // 7、封装结果
-        List<OrderCheckOverviewVO> orderCheckOverviewVOS = new ArrayList<>();
+        List<OrderCheckOverviewVo> orderCheckOverviewVos = new ArrayList<>();
         orders.stream()
                 .forEach(l ->
                 {
                     // 7.1、订单信息属性拷贝
-                    OrderCheckOverviewVO orderCheckOverviewVO = new OrderCheckOverviewVO();
+                    OrderCheckOverviewVo orderCheckOverviewVO = new OrderCheckOverviewVo();
                     BeanUtils.copyProperties(l, orderCheckOverviewVO);
 
                     // 7.2、用户名属性补充
@@ -420,13 +420,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     orderCheckOverviewVO.setBikeNumber(numberMap.get(l.getBikeId()));
 
                     // 7.4、将VO存入VOS
-                    orderCheckOverviewVOS.add(orderCheckOverviewVO);
+                    orderCheckOverviewVos.add(orderCheckOverviewVO);
                 });
 
         // 8、返回结果
         return PageResult.builder()
-                .total((long) orderCheckOverviewVOS.size())
-                .records(orderCheckOverviewVOS)
+                .total((long) orderCheckOverviewVos.size())
+                .records(orderCheckOverviewVos)
                 .build();
     }
 
@@ -437,7 +437,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * @return
      */
     @Override
-    public OrderCheckDetailVO checkOne(Integer id)
+    public OrderCheckDetailVo checkOne(Integer id)
     {
         // 1、获取订单信息
         Order order = getById(id);
@@ -452,7 +452,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         // 4、封装结果
         // 4.1、订单信息属性拷贝
-        OrderCheckDetailVO orderCheckDetailVO = new OrderCheckDetailVO();
+        OrderCheckDetailVo orderCheckDetailVO = new OrderCheckDetailVo();
         BeanUtils.copyProperties(order, orderCheckDetailVO);
 
         // 4.2、用户信息属性补充

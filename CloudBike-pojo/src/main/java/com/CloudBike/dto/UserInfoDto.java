@@ -5,17 +5,23 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 登录DTO
+ * 用户个人信息DTO
  * @author unique
  */
 @Data
-public class LoginDTO implements Serializable {
+public class UserInfoDto implements Serializable {
+
     /**
      * 用户名
      */
     private String username;
     /**
-     * 密码
+     * 手机号
      */
-    private String password;
+    private String phone;
+    /**
+     * 头像图片路径
+     */
+    private String image;
+
 }

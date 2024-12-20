@@ -4,7 +4,7 @@ import com.CloudBike.constant.BusinessConstant;
 import com.CloudBike.constant.MessageConstant;
 import com.CloudBike.constant.StatusConstant;
 import com.CloudBike.constant.TypeConstant;
-import com.CloudBike.dto.BikeInfoDTO;
+import com.CloudBike.dto.BikeInfoDto;
 import com.CloudBike.dto.BikeInfoPageQuery;
 import com.CloudBike.entity.Bike;
 import com.CloudBike.entity.Order;
@@ -12,7 +12,7 @@ import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.BikeMapper;
 import com.CloudBike.result.PageResult;
 import com.CloudBike.service.IBikeService;
-import com.CloudBike.vo.BikeCheckOverviewVO;
+import com.CloudBike.vo.BikeCheckOverviewVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
@@ -70,12 +70,12 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
         }
 
         // 3.2、封装属性
-        List<BikeCheckOverviewVO> bikeCheckOverviewVOS = new ArrayList<>();
+        List<BikeCheckOverviewVo> bikeCheckOverviewVos = new ArrayList<>();
         records.stream().forEach(l ->
         {
-            BikeCheckOverviewVO bikeCheckOverviewVO = new BikeCheckOverviewVO();
+            BikeCheckOverviewVo bikeCheckOverviewVO = new BikeCheckOverviewVo();
             BeanUtils.copyProperties(l, bikeCheckOverviewVO);
-            bikeCheckOverviewVOS.add(bikeCheckOverviewVO);
+            bikeCheckOverviewVos.add(bikeCheckOverviewVO);
         });
 
         // 4、查询其中状态为租赁中和待归还的单车（如有）
@@ -110,7 +110,7 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
                     }));
 
             // 4.4、补充属性
-            bikeCheckOverviewVOS.stream()
+            bikeCheckOverviewVos.stream()
                     .filter(l -> Objects.equals(l.getStatus(), StatusConstant.RENTING) || Objects.equals(l.getStatus(), StatusConstant.TO_RETURN))
                     .forEach(l -> l.setReturnTime(returnTimes.get(l.getId())));
         }
@@ -118,21 +118,21 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
         // 5、返回结果
         return PageResult.builder()
                 .total(total)
-                .records(bikeCheckOverviewVOS)
+                .records(bikeCheckOverviewVos)
                 .build();
     }
 
     /**
      * 新增单车
-     * @param bikeInfoDTO
+     * @param bikeInfoDto
      */
     @Override
     @Transactional
-    public void insert(BikeInfoDTO bikeInfoDTO)
+    public void insert(BikeInfoDto bikeInfoDto)
     {
         // 1、检验单车编号的唯一性
         // 1.1、查询单车编号相同的单车
-        String number = bikeInfoDTO.getNumber();
+        String number = bikeInfoDto.getNumber();
         Bike one = lambdaQuery()
                 .eq(Bike::getNumber, number)
                 .one();
@@ -145,10 +145,10 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
 
         // 2、属性拷贝
         Bike bike = new Bike();
-        BeanUtils.copyProperties(bikeInfoDTO, bike);
+        BeanUtils.copyProperties(bikeInfoDto, bike);
 
         // 3、将图片路径集合转为长字符串存储
-        List<String> images = bikeInfoDTO.getImages();
+        List<String> images = bikeInfoDto.getImages();
         if (images != null && !images.isEmpty())
         {
             String image = String.join(",", images);
@@ -166,7 +166,7 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
      * @return
      */
     @Override
-    public BikeInfoDTO get(Integer id)
+    public BikeInfoDto get(Integer id)
     {
         // 1、根据id获取单车信息
         Bike bike = getById(id);
@@ -180,7 +180,7 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
         }
 
         // 3、拷贝属性
-        BikeInfoDTO bikeInfoDTO = new BikeInfoDTO();
+        BikeInfoDto bikeInfoDTO = new BikeInfoDto();
         BeanUtils.copyProperties(bike, bikeInfoDTO);
         bikeInfoDTO.setImages(images);
 
@@ -190,15 +190,15 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
 
     /**
      * 修改单车基本信息
-     * @param bikeInfoDTO
+     * @param bikeInfoDto
      */
     @Override
     @Transactional
-    public void update(BikeInfoDTO bikeInfoDTO)
+    public void update(BikeInfoDto bikeInfoDto)
     {
         // 1、获取单车id和number
-        Integer id = bikeInfoDTO.getId();
-        String number = bikeInfoDTO.getNumber();
+        Integer id = bikeInfoDto.getId();
+        String number = bikeInfoDto.getNumber();
 
         // 2、判断单车编号是否重复
         // 2.1、查询单车编号相同的单车
@@ -213,7 +213,7 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
         }
 
         // 3、将图片路径集合转为字符串
-        List<String> images = bikeInfoDTO.getImages();
+        List<String> images = bikeInfoDto.getImages();
         String image = null;
         if (images != null && !images.isEmpty())
         {
@@ -222,7 +222,7 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
 
         // 4、修改单车基本信息
         Bike bike=new Bike();
-        BeanUtils.copyProperties(bikeInfoDTO, bike);
+        BeanUtils.copyProperties(bikeInfoDto, bike);
         bike.setImage(image);
         updateById(bike);
     }
@@ -246,7 +246,7 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
      * @return
      */
     @Override
-    public List<BikeInfoDTO> category(Integer type)
+    public List<BikeInfoDto> category(Integer type)
     {
         // 存放查询结果
         List<Bike> bikes=new ArrayList<>();
@@ -285,12 +285,12 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
         }
 
         // 4、封装结果
-        List<BikeInfoDTO> bikeInfoDTOS=new ArrayList<>();
+        List<BikeInfoDto> bikeInfoDtos =new ArrayList<>();
         bikes.stream()
                 .forEach(l->{
 
                     // 4.1、属性拷贝
-                    BikeInfoDTO bikeInfoDTO=new BikeInfoDTO();
+                    BikeInfoDto bikeInfoDTO=new BikeInfoDto();
                     BeanUtils.copyProperties(l, bikeInfoDTO);
 
                     // 4.2、将图片路径字符串转换为集合
@@ -302,11 +302,11 @@ public class BikeServiceImpl extends ServiceImpl<BikeMapper, Bike> implements IB
                     }
                     bikeInfoDTO.setImages(images);
 
-                    // 4.3、将DTO存入结果DTOS中
-                    bikeInfoDTOS.add(bikeInfoDTO);
+                    // 4.3、将Dto存入结果Dtos中
+                    bikeInfoDtos.add(bikeInfoDTO);
                 });
 
         // 5、返回结果
-        return bikeInfoDTOS;
+        return bikeInfoDtos;
     }
 }

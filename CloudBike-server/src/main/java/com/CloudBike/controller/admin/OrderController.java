@@ -5,7 +5,7 @@ import com.CloudBike.dto.OrderInfoPageQuery;
 import com.CloudBike.result.PageResult;
 import com.CloudBike.result.Result;
 import com.CloudBike.service.IOrderService;
-import com.CloudBike.vo.OrderCheckDetailVO;
+import com.CloudBike.vo.OrderCheckDetailVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,10 +49,10 @@ public class OrderController {
      * @return
      */
     @GetMapping
-    public Result<OrderCheckDetailVO> one(Integer id)
+    public Result<OrderCheckDetailVo> one(Integer id)
     {
         log.info("根据订单id查看订单详情：{}",id);
-        OrderCheckDetailVO orderCheckDetailVO=orderService.checkOne(id);
+        OrderCheckDetailVo orderCheckDetailVO=orderService.checkOne(id);
         return Result.success(orderCheckDetailVO);
     }
 

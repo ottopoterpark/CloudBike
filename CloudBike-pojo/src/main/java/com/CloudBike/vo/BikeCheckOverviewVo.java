@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * @author unique
  */
 @Data
-public class BikeCheckOverviewVO implements Serializable {
+public class BikeCheckOverviewVo implements Serializable {
     /**
      * 单车id
      */

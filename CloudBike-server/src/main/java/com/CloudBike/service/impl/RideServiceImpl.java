@@ -3,7 +3,7 @@ package com.CloudBike.service.impl;
 import com.CloudBike.constant.MessageConstant;
 import com.CloudBike.constant.StatusConstant;
 import com.CloudBike.context.BaseContext;
-import com.CloudBike.dto.RideInfoDTO;
+import com.CloudBike.dto.RideInfoDto;
 import com.CloudBike.dto.RideInfoPageQuery;
 import com.CloudBike.entity.Ride;
 import com.CloudBike.entity.RideDetail;
@@ -43,7 +43,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
      */
     @Override
     @Transactional
-    public void insert(RideInfoDTO rideInfoDTO)
+    public void insert(RideInfoDto rideInfoDTO)
     {
         // 1、获取活动发起者信息
         Integer userId = BaseContext.getCurrentId();
@@ -123,7 +123,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
      * @return
      */
     @Override
-    public List<RideInfoDTO> list(String name)
+    public List<RideInfoDto> list(String name)
     {
         // 1、根据条件筛选最近的骑行团活动
         List<Ride> list = lambdaQuery()
@@ -146,8 +146,8 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
             return Collections.emptyList();
         }
 
-        // 3、将查询信息转化为对应DTOS
-        List<RideInfoDTO> rideInfoDTOS = new ArrayList<>();
+        // 3、将查询信息转化为对应Dtos
+        List<RideInfoDto> rideInfoDtos = new ArrayList<>();
 
         // 3.1、获取这些活动的发起者id
         List<Integer> userIds = list.stream()
@@ -165,7 +165,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         list.stream().forEach(l ->
         {
             // 3.4、属性拷贝
-            RideInfoDTO rideInfoDTO = new RideInfoDTO();
+            RideInfoDto rideInfoDTO = new RideInfoDto();
             BeanUtils.copyProperties(l, rideInfoDTO);
 
             // 3.5、将图片路径字符串转换为集合
@@ -180,12 +180,12 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
             // 3.6、补充属性
             rideInfoDTO.setUsername(usernames.get(l.getUserId()));
 
-            // 3.7、将DTO存入DTOS
-            rideInfoDTOS.add(rideInfoDTO);
+            // 3.7、将Dto存入Dtos
+            rideInfoDtos.add(rideInfoDTO);
         });
 
         // 4、返回结果
-        return rideInfoDTOS;
+        return rideInfoDtos;
     }
 
     /**
@@ -195,7 +195,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
      * @return
      */
     @Override
-    public RideInfoDTO one(Integer id)
+    public RideInfoDto one(Integer id)
     {
         // 1、根据id查询骑行团信息
         Ride ride = getById(id);
@@ -208,7 +208,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
         // 3、封装属性
         // 3.1、属性拷贝
-        RideInfoDTO rideInfoDTO = new RideInfoDTO();
+        RideInfoDto rideInfoDTO = new RideInfoDto();
         BeanUtils.copyProperties(ride, rideInfoDTO);
 
         // 3.2、属性补充
@@ -364,21 +364,21 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 .collect(Collectors.toMap(User::getId, User::getUsername));
 
         // 3.5、补充属性（用户名和联系方式）
-        List<RideInfoDTO> rideInfoDTOS = new ArrayList<>();
+        List<RideInfoDto> rideInfoDtos = new ArrayList<>();
         rides.stream()
                 .forEach(l ->
                 {
-                    RideInfoDTO rideInfoDTO = new RideInfoDTO();
+                    RideInfoDto rideInfoDTO = new RideInfoDto();
                     BeanUtils.copyProperties(l, rideInfoDTO);
                     rideInfoDTO.setUsername(usernames.get(l.getUserId()));
                     rideInfoDTO.setPhone(phones.get(l.getUserId()));
-                    rideInfoDTOS.add(rideInfoDTO);
+                    rideInfoDtos.add(rideInfoDTO);
                 });
 
         // 5、对用户名进行模糊匹配筛选
         if (username != null && !username.isEmpty())
         {
-            List<RideInfoDTO> list = rideInfoDTOS.stream()
+            List<RideInfoDto> list = rideInfoDtos.stream()
                     .filter(l -> l.getUsername().contains(username))
                     .toList();
 
@@ -401,7 +401,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
         // 6、封装分页查询结果
         return PageResult.builder()
                 .total(p.getTotal())
-                .records(rideInfoDTOS)
+                .records(rideInfoDtos)
                 .build();
     }
 
@@ -412,7 +412,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
      * @return
      */
     @Override
-    public RideInfoDTO getone(Integer id)
+    public RideInfoDto getone(Integer id)
     {
         // 1、根据id查询骑行团信息
         Ride ride = getById(id);
@@ -425,7 +425,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
 
         // 3、封装结果
         // 3.1、属性拷贝
-        RideInfoDTO rideInfoDTO = new RideInfoDTO();
+        RideInfoDto rideInfoDTO = new RideInfoDto();
         BeanUtils.copyProperties(ride, rideInfoDTO);
 
         // 3.2、属性补充
@@ -493,7 +493,7 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
      * @return
      */
     @Override
-    public List<RideInfoDTO> history(Integer status)
+    public List<RideInfoDto> history(Integer status)
     {
         // 1、获取用户信息
         Integer userId = BaseContext.getCurrentId();
@@ -519,12 +519,12 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                 .list();
 
         // 3、将查询结果封装
-        List<RideInfoDTO> rideInfoDTOS = new ArrayList<>();
+        List<RideInfoDto> rideInfoDtos = new ArrayList<>();
         rides.stream()
                 .forEach(l ->
                 {
                     // 3.1、属性拷贝
-                    RideInfoDTO rideInfoDTO = new RideInfoDTO();
+                    RideInfoDto rideInfoDTO = new RideInfoDto();
                     BeanUtils.copyProperties(l, rideInfoDTO);
 
                     // 3.2、将图片路径字符串转换为集合
@@ -536,38 +536,38 @@ public class RideServiceImpl extends ServiceImpl<RideMapper, Ride> implements IR
                     }
                     rideInfoDTO.setImages(images);
 
-                    // 3.3、将DTO存入结果DTOS中
-                    rideInfoDTOS.add(rideInfoDTO);
+                    // 3.3、将Dto存入结果Dtos中
+                    rideInfoDtos.add(rideInfoDTO);
                 });
 
         // 4、判断查询类型
-        List<RideInfoDTO> result = new ArrayList<>();
+        List<RideInfoDto> result = new ArrayList<>();
         // 4.1、如果查询类型为全部
         if (Objects.equals(status, StatusConstant.ALL))
         {
-            result = rideInfoDTOS.stream()
+            result = rideInfoDtos.stream()
                     // 按出发时间升序，展示最近
-                    .sorted(Comparator.comparing(RideInfoDTO::getDepartureTime))
+                    .sorted(Comparator.comparing(RideInfoDto::getDepartureTime))
                     .toList();
         }
 
         // 4.2、如果查询类型为未开始
         if (Objects.equals(status, StatusConstant.PREPARED))
         {
-            result = rideInfoDTOS.stream()
+            result = rideInfoDtos.stream()
                     .filter(l -> l.getDepartureTime().isAfter(LocalDateTime.now()))
                     // 按出发时间升序，展示最近
-                    .sorted(Comparator.comparing(RideInfoDTO::getDepartureTime))
+                    .sorted(Comparator.comparing(RideInfoDto::getDepartureTime))
                     .toList();
         }
 
         // 4.3、如果查询类型为已结束
         if (Objects.equals(status, StatusConstant.FINISHED))
         {
-            result = rideInfoDTOS.stream()
+            result = rideInfoDtos.stream()
                     .filter(l -> l.getDepartureTime().isBefore(LocalDateTime.now()))
                     // 按出发时间升序，展示最近
-                    .sorted(Comparator.comparing(RideInfoDTO::getDepartureTime))
+                    .sorted(Comparator.comparing(RideInfoDto::getDepartureTime))
                     .toList();
         }
 

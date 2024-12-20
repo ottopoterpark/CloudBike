@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 @Data
 @Builder
-public class LoginVO implements Serializable {
+public class LoginVo implements Serializable {
     /**
      * 主键
      */

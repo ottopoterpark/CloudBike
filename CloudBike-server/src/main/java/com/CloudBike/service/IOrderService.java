@@ -3,8 +3,8 @@ package com.CloudBike.service;
 import com.CloudBike.dto.OrderInfoPageQuery;
 import com.CloudBike.entity.Order;
 import com.CloudBike.result.PageResult;
-import com.CloudBike.vo.OrderCheckDetailVO;
-import com.CloudBike.vo.OrderOverviewVO;
+import com.CloudBike.vo.OrderCheckDetailVo;
+import com.CloudBike.vo.OrderOverviewVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -24,14 +24,14 @@ public interface IOrderService extends IService<Order> {
      * @param category
      * @return
      */
-    List<OrderOverviewVO> list(Integer category);
+    List<OrderOverviewVo> list(Integer category);
 
     /**
      * 根据订单id查看你订单
      * @param id
      * @return
      */
-    OrderOverviewVO one(Integer id);
+    OrderOverviewVo one(Integer id);
 
     /**
      * 订单支付
@@ -63,7 +63,7 @@ public interface IOrderService extends IService<Order> {
      * @param id
      * @return
      */
-    OrderCheckDetailVO checkOne(Integer id);
+    OrderCheckDetailVo checkOne(Integer id);
 
     /**
      * 提车

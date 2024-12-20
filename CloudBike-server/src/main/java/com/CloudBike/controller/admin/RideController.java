@@ -1,7 +1,7 @@
 package com.CloudBike.controller.admin;
 
 
-import com.CloudBike.dto.RideInfoDTO;
+import com.CloudBike.dto.RideInfoDto;
 import com.CloudBike.dto.RideInfoPageQuery;
 import com.CloudBike.result.PageResult;
 import com.CloudBike.result.Result;
@@ -46,10 +46,10 @@ public class RideController {
      * @return
      */
     @GetMapping
-    public Result<RideInfoDTO> one(Integer id)
+    public Result<RideInfoDto> one(Integer id)
     {
         log.info("查看骑行团信息详情：{}", id);
-        RideInfoDTO rideInfoDTO= rideService.getone(id);
+        RideInfoDto rideInfoDTO= rideService.getone(id);
         return Result.success(rideInfoDTO);
     }
 

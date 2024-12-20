@@ -1,7 +1,7 @@
 package com.CloudBike.controller.admin;
 
 
-import com.CloudBike.dto.BikeInfoDTO;
+import com.CloudBike.dto.BikeInfoDto;
 import com.CloudBike.dto.BikeInfoPageQuery;
 import com.CloudBike.result.PageResult;
 import com.CloudBike.result.Result;
@@ -43,14 +43,14 @@ public class BikeController {
 
     /**
      * 新增单车
-     * @param bikeInfoDTO
+     * @param bikeInfoDto
      * @return
      */
     @PostMapping
-    public Result save(@RequestBody BikeInfoDTO bikeInfoDTO)
+    public Result save(@RequestBody BikeInfoDto bikeInfoDto)
     {
-        log.info("新增单车：{}",bikeInfoDTO);
-        bikeService.insert(bikeInfoDTO);
+        log.info("新增单车：{}",bikeInfoDto);
+        bikeService.insert(bikeInfoDto);
         return Result.success();
     }
 
@@ -60,23 +60,23 @@ public class BikeController {
      * @return
      */
     @GetMapping("/{id}")
-    public Result<BikeInfoDTO> getById(@PathVariable Integer id)
+    public Result<BikeInfoDto> getById(@PathVariable Integer id)
     {
         log.info("查看单车详情：{}",id);
-        BikeInfoDTO bikeInfoDTO= bikeService.get(id);
+        BikeInfoDto bikeInfoDTO= bikeService.get(id);
         return Result.success(bikeInfoDTO);
     }
 
     /**
      * 修改单车基本信息
-     * @param bikeInfoDTO
+     * @param bikeInfoDto
      * @return
      */
     @PutMapping
-    public Result update(@RequestBody BikeInfoDTO bikeInfoDTO)
+    public Result update(@RequestBody BikeInfoDto bikeInfoDto)
     {
-        log.info("修改单车基本信息：{}",bikeInfoDTO);
-        bikeService.update(bikeInfoDTO);
+        log.info("修改单车基本信息：{}",bikeInfoDto);
+        bikeService.update(bikeInfoDto);
         return Result.success();
     }
 

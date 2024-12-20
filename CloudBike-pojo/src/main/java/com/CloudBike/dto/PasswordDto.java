@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author unique
  */
 @Data
-public class PasswordDTO implements Serializable {
+public class PasswordDto implements Serializable {
     /**
      * 旧密码
      */

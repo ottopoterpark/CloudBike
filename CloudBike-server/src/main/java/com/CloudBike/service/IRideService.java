@@ -1,6 +1,6 @@
 package com.CloudBike.service;
 
-import com.CloudBike.dto.RideInfoDTO;
+import com.CloudBike.dto.RideInfoDto;
 import com.CloudBike.dto.RideInfoPageQuery;
 import com.CloudBike.entity.Ride;
 import com.CloudBike.result.PageResult;
@@ -22,7 +22,7 @@ public interface IRideService extends IService<Ride> {
      *
      * @param rideInfoDTO
      */
-    void insert(RideInfoDTO rideInfoDTO);
+    void insert(RideInfoDto rideInfoDTO);
 
     /**
      * 查询最近的骑行团
@@ -30,7 +30,7 @@ public interface IRideService extends IService<Ride> {
      * @param name
      * @return
      */
-    List<RideInfoDTO> list(String name);
+    List<RideInfoDto> list(String name);
 
     /**
      * 根据id查询骑行团详情
@@ -38,7 +38,7 @@ public interface IRideService extends IService<Ride> {
      * @param id
      * @return
      */
-    RideInfoDTO one(Integer id);
+    RideInfoDto one(Integer id);
 
     /**
      * 加入骑行团
@@ -61,7 +61,7 @@ public interface IRideService extends IService<Ride> {
      * @param id
      * @return
      */
-    RideInfoDTO getone(Integer id);
+    RideInfoDto getone(Integer id);
 
     /**
      * 审核骑行团信息
@@ -77,5 +77,5 @@ public interface IRideService extends IService<Ride> {
      * @param status
      * @return
      */
-    List<RideInfoDTO> history(Integer status);
+    List<RideInfoDto> history(Integer status);
 }

@@ -1,9 +1,9 @@
 package com.CloudBike.service;
 
-import com.CloudBike.dto.UserInfoDTO;
-import com.CloudBike.dto.UserLoginDTO;
+import com.CloudBike.dto.UserInfoDto;
+import com.CloudBike.dto.UserLoginDto;
 import com.CloudBike.entity.User;
-import com.CloudBike.vo.BalanceVO;
+import com.CloudBike.vo.BalanceVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -17,10 +17,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface IUserService extends IService<User> {
     /**
      * 微信用户登录
-     * @param userLoginDTO
+     * @param userLoginDto
      * @return
      */
-    User login(UserLoginDTO userLoginDTO);
+    User login(UserLoginDto userLoginDto);
 
     /**
      * 充值
@@ -32,17 +32,17 @@ public interface IUserService extends IService<User> {
      * 查看个人信息
      * @return
      */
-    UserInfoDTO one();
+    UserInfoDto one();
 
     /**
      * 修改个人信息
-     * @param userInfoDTO
+     * @param userInfoDto
      */
-    void update(UserInfoDTO userInfoDTO);
+    void update(UserInfoDto userInfoDto);
 
     /**
      * 查询个人余额
      * @return
      */
-    BalanceVO balance();
+    BalanceVo balance();
 }

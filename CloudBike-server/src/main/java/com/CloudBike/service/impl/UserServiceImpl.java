@@ -3,15 +3,15 @@ package com.CloudBike.service.impl;
 import com.CloudBike.constant.DiscountConstant;
 import com.CloudBike.constant.MessageConstant;
 import com.CloudBike.context.BaseContext;
-import com.CloudBike.dto.UserInfoDTO;
-import com.CloudBike.dto.UserLoginDTO;
+import com.CloudBike.dto.UserInfoDto;
+import com.CloudBike.dto.UserLoginDto;
 import com.CloudBike.entity.User;
 import com.CloudBike.exception.BaseException;
 import com.CloudBike.mapper.UserMapper;
 import com.CloudBike.properties.WeChatProperties;
 import com.CloudBike.service.IUserService;
 import com.CloudBike.utils.HttpClientUtil;
-import com.CloudBike.vo.BalanceVO;
+import com.CloudBike.vo.BalanceVo;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -43,19 +43,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     /**
      * 微信用户登录
      *
-     * @param userLoginDTO
+     * @param userLoginDto
      * @return
      */
     @Override
     @Transactional
-    public User login(UserLoginDTO userLoginDTO)
+    public User login(UserLoginDto userLoginDto)
     {
         // 调用微信接口服务，获得当前微信用户的openid
         // 封装请求参数
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("appid", weChatProperties.getAppid());
         paramMap.put("secret", weChatProperties.getSecret());
-        paramMap.put("js_code", userLoginDTO.getCode());
+        paramMap.put("js_code", userLoginDto.getCode());
         paramMap.put("grant_type", "authorization_code");
 
         // 微信官方获得微信用户openid的url
@@ -137,7 +137,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @return
      */
     @Override
-    public UserInfoDTO one()
+    public UserInfoDto one()
     {
         // 1、获取当前用户id
         Integer userId = BaseContext.getCurrentId();
@@ -146,7 +146,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User user = getById(userId);
 
         // 3、封装结果
-        UserInfoDTO userInfoDTO = new UserInfoDTO();
+        UserInfoDto userInfoDTO = new UserInfoDto();
         BeanUtils.copyProperties(user, userInfoDTO);
 
         // 4、返回结果
@@ -156,20 +156,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     /**
      * 修改个人信息
      *
-     * @param userInfoDTO
+     * @param userInfoDto
      */
     @Override
     @Transactional
-    public void update(UserInfoDTO userInfoDTO)
+    public void update(UserInfoDto userInfoDto)
     {
         // 1、获取当前用户id
         Integer userId = BaseContext.getCurrentId();
 
         // 2、对用户名进行唯一校验
         // 2.1、查询用户名一致的用户
-        String username = userInfoDTO.getUsername();
-        String phone = userInfoDTO.getPhone();
-        String image = userInfoDTO.getImage();
+        String username = userInfoDto.getUsername();
+        String phone = userInfoDto.getPhone();
+        String image = userInfoDto.getImage();
         User user = lambdaQuery()
                 .eq(username != null && !username.isEmpty(), User::getUsername, username)
                 .one();
@@ -199,14 +199,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @return
      */
     @Override
-    public BalanceVO balance()
+    public BalanceVo balance()
     {
         // 获取用户信息
         Integer userId = BaseContext.getCurrentId();
         User user = getById(userId);
 
         // 封装结果
-        BalanceVO balanceVO=new BalanceVO();
+        BalanceVo balanceVO=new BalanceVo();
         balanceVO.setBalance(user.getBalance());
 
         // 返回结果

@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author unique
  */
 @Data
-public class BalanceVO implements Serializable {
+public class BalanceVo implements Serializable {
 
     /**
      * 余额
